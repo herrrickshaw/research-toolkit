@@ -1,0 +1,6 @@
+.zotero_api_key.json
+*.jsonl
+*.log
+stage/
+__pycache__/
+*.pyc
