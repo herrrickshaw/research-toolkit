@@ -10,3 +10,11 @@ __pycache__/
 document_catalog.duckdb
 *.duckdb.wal
 topic_sweep_*.md
+
+# ZOTERO_STAGING_DIR leftovers - actual downloaded file content (not just
+# metadata), left behind when a run gets interrupted before its per-file
+# cleanup. Should be empty in steady state; never commit whatever's in it.
+gdrive_stage/
+
+# Local graphify tool cache - regenerable, gitignored account-wide (see ~/.gitignore).
+graphify-out/

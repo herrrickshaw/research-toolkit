@@ -37,6 +37,7 @@ import uuid
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from zotero_crud import ZoteroCRUD
+from categorize import build_tags
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RCLONE_REMOTE = os.environ.get("RCLONE_REMOTE", "dropbox:")
@@ -71,7 +72,7 @@ MIME_OVERRIDES = {
 # Zotero data directory itself if it happens to live inside the same remote -
 # touching zotero.sqlite-wal while the app has it open would be actively
 # dangerous, not just noisy.
-EXCLUDE_TOP_FOLDERS = set(filter(None, os.environ.get("EXCLUDE_TOP_FOLDERS", "Zotero").split(",")))
+EXCLUDE_TOP_FOLDERS = set(filter(None, os.environ.get("EXCLUDE_TOP_FOLDERS", "Zotero,Organized").split(",")))
 
 
 def get_top_level_folders():
@@ -193,6 +194,7 @@ def save_to_zotero(local_path, title, dropbox_path, retries=2, timeout=300):
     mtime_ms = int(os.path.getmtime(local_path) * 1000)
     basename = os.path.basename(local_path)
 
+    source = RCLONE_REMOTE.rstrip(":")
     item = {
         "itemType": "attachment",
         "linkMode": "imported_file",
@@ -201,8 +203,8 @@ def save_to_zotero(local_path, title, dropbox_path, retries=2, timeout=300):
         "contentType": content_type,
         "md5": md5,
         "mtime": mtime_ms,
-        "url": f"dropbox://{dropbox_path}",
-        "tags": [],
+        "url": f"{source}://{dropbox_path}",
+        "tags": build_tags(dropbox_path, mtime_ms, source),
     }
     if DROPBOX_IMPORT_COLLECTION_KEY:
         item["collections"] = [DROPBOX_IMPORT_COLLECTION_KEY]
