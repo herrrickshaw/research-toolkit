@@ -4,3 +4,9 @@
 stage/
 __pycache__/
 *.pyc
+
+# Contains real personal document titles/paths (CVs, bank statements, tax
+# filings, ID docs) via its topic/path columns - this repo is PUBLIC, never commit it.
+document_catalog.duckdb
+*.duckdb.wal
+topic_sweep_*.md
