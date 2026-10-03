@@ -75,6 +75,90 @@ Supported document extensions (edit `ALLOWED_EXTENSIONS` in `zotero_dropbox_impo
 - `process_archives.py` — implements point 4 (archive discovery/extraction)
 - `remediate_failed.py` — implements point 6 (failure retry + metadata enrichment)
 
+## Full-text extraction (pdf_to_markdown.py)
+
+`build_duckdb_catalog.py` gives metadata only. `pdf_to_markdown.py` fills the
+gap: converts every catalogued document (pdf, epub, docx, pptx, xlsx, plus
+legacy doc/ppt and a long tail — see below) to a standalone `.md` file, no
+LLM/agent calls (costs no tokens to run), so the corpus becomes full-text
+searchable via `qmd search` (the `research` collection in
+`~/.config/qmd/index.yml`), not just browsable by filename. Despite the
+filename, it now covers the whole catalog, not just PDFs — kept as-is since
+PDFs are still the large majority (~12k of ~13.7k documents).
+
+```bash
+python3 pdf_to_markdown.py           # one capped batch (what the daily job runs)
+python3 pdf_to_markdown.py --status  # progress summary, no side effects
+```
+
+Extraction is dispatched per filetype, fastest path first:
+- **pdf, epub** → in-process PyMuPDF (`fitz`) — ~0.04-0.4s/doc.
+- **docx, pptx, xlsx** → in-process `python-docx`/`python-pptx`/`openpyxl`.
+- **doc, ppt** (legacy binary Office — markitdown has no converter for
+  these at all) → one batched `soffice --headless --convert-to txt` call
+  per run covering every doc/ppt in the batch at once, not one subprocess
+  per file.
+- **everything else** (mobi, djvu, chm, ris, html, malformed filetype
+  values) → a `markitdown` subprocess per file, the slow-path fallback;
+  small enough by count (~2.5% of the catalog) that it doesn't dominate.
+- No OCR: image-only/scanned pages extract as empty text (`--status` shows
+  the near-empty fraction so a future OCR pass could target just those).
+
+Key points (see the script's own docstring for the full rationale):
+- Source bytes come from the `dropbox:`/`googledrive:` rclone remotes, not
+  the local Finder/CloudStorage mounts — most catalogued folders aren't
+  actually present locally (selective sync), even though they're in the
+  cloud account that was originally scanned.
+- **Batched I/O**: one `rclone copy --files-from=<list>` per source to
+  bulk-fetch a whole batch, then one bulk `rclone copy` per source to
+  upload it all back — not one `copyto` per file. This (plus in-process
+  extraction over markitdown subprocesses) took a 300-doc batch from ~52min
+  to ~5min.
+- Every conversion is copied BACK to the cloud (original file + its new
+  `.md`) under `<same remote>:research_md_corpus/` — Create-only via a real
+  rclone/API call ("CRUD methodology"), never touching the source file.
+- Resumable via a `fulltext_md` table in `document_catalog.duckdb`, keyed
+  by `item_key` (md5 is populated for too few rows to use as the key).
+- Capped per run (`PDF2MD_MAX_DOCS_PER_RUN`, default 1000;
+  `PDF2MD_MAX_MB_PER_RUN`, default 5000) and disk-safety-margin-checked.
+- Runs daily at 05:30 via `launchd` (`com.user.pdftomarkdown.plist` →
+  `daily_pdf_to_md.sh`); `full_backfill_driver.sh` loops it continuously
+  in the background for an initial bulk catch-up, pausing the daily job
+  while it runs and re-enabling it on completion. Logged to
+  `daily_pdf_to_md.log`/`.err` and `full_backfill_run.log`. Absolute paths
+  to `rclone`/`markitdown`/`soffice` are hardcoded rather than relying on
+  `$PATH`, since launchd's minimal PATH doesn't include Homebrew or
+  `~/.local/bin`.
+- Output (`md_corpus/`) is gitignored — real extracted document text, same
+  reason `document_catalog.duckdb` itself is excluded.
+
+## Cloud backup for the qmd search index (qmd_cloud_backup.sh / qmd_cloud_restore.sh)
+
+`md_corpus/` (5.2GB) and qmd's own search index (`~/.cache/qmd/index.sqlite`,
+~9GB) are both local-only by default — qmd has no live-cloud-read mode, so
+they can't just be moved to Dropbox/Google Drive and mounted: qmd needs
+`md_corpus/` on a real local path to scan/index it, and its SQLite index is
+actively queried (several `qmd mcp` server processes hold it open), which
+SQLite's own docs warn against doing over a network filesystem (corruption
+risk + very poor performance from constant small random reads). This Mac
+also has no macFUSE installed, so `rclone mount` isn't even available
+without the user personally approving a kernel extension.
+
+Instead: a daily backup (`com.user.qmdcloudbackup.plist`, 22:45) copies both
+to `dropbox:qmd_cloud_backup/` — the index via `sqlite3 .backup` first (a
+consistent snapshot, safe even while qmd mcp is running, not a raw copy of
+a possibly-mid-write file) — and `qmd_cloud_restore.sh` pulls everything
+back down (refuses to overwrite an existing local index/corpus unless
+`--force`, since a blind restore over a newer local index would lose
+anything indexed since the last backup). This gets the actual benefit
+asked for — cloud-backed, portable to a new machine, survives local disk
+loss — without breaking live search or risking DB corruption.
+
+```bash
+./qmd_cloud_backup.sh    # what the daily 22:45 job runs
+./qmd_cloud_restore.sh --force   # rebuild local md_corpus/ + index from the cloud backup
+```
+
 ## Known limitations
 
 - No automatic PDF/EPUB metadata recognition (that's specific to Zotero's browser-connector, not its CRUD API) — items get filename-derived titles unless you run `remediate_failed.py` or use Zotero's own "Retrieve Metadata for PDF" afterward.

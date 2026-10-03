@@ -18,3 +18,19 @@ gdrive_stage/
 
 # Local graphify tool cache - regenerable, gitignored account-wide (see ~/.gitignore).
 graphify-out/
+
+# pdf_to_markdown.py output: real extracted document text (titles, personal
+# CVs, tax/ID docs, etc. per categorize.py's own PERSONAL_KEYWORDS list) -
+# same reason document_catalog.duckdb is excluded above. Never commit it.
+md_corpus/
+pdf2md_stage/
+daily_pdf_to_md.log
+full_backfill_run.log
+sweep_run.log
+sweep_archives_found.jsonl
+sweep_skipped_folders.jsonl
+sweep_checkpoint.jsonl
+sweep_stdout.log
+qmd_cloud_backup.log
+qmd_backup_snapshot/
+sweep_insert_stdout.log
