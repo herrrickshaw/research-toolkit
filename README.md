@@ -1,5 +1,9 @@
 # research-toolkit
 
+<!-- how-to-use-with-ai -->
+> **New here?** See [How to use this repo with AI (Claude, Gemini, ChatGPT)](HOW_TO_USE_WITH_AI.md) — clone it, paste it into an AI tool, and ask in plain English.
+
+
 A methodology and reference implementation for turning a large, unsorted pile of documents — thousands of PDFs and ebooks scattered across cloud storage, buried inside old `.zip` archives, mixed in with everything else — into a properly cataloged research library, without babysitting it file by file.
 
 This is not a research corpus and contains no documents, filenames, or content from any specific collection. It's the pipeline: how to discover, extract, and catalog documents at a scale where naive "just loop over the files" scripts fall over.
