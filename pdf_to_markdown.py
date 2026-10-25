@@ -520,7 +520,7 @@ def run(max_docs, max_mb, status_only=False):
     print(f"  bulk-fetching {total_to_fetch} file(s) across {len(to_fetch_by_source)} source(s)...")
     bulk_fetch(to_fetch_by_source)
 
-    n_ok = n_fetch_failed = n_convert_failed = n_too_large = n_cloud_failed = 0
+    n_ok = n_fetch_failed = n_convert_failed = n_too_large = n_cloud_failed = n_deferred = 0
     mb_read = 0.0
     sources_uploaded = set()
     soffice_queue = []  # (item_key, staged, ext, source, upload_dir) — converted in one batched pass below
@@ -549,6 +549,11 @@ def run(max_docs, max_mb, status_only=False):
                 continue
 
             size_mb = staged.stat().st_size / (1024 * 1024)
+            if mb_read > 0 and mb_read + size_mb > max_mb:
+                # Per-run read cap (--max-mb / PDF2MD_MAX_MB_PER_RUN): leave the
+                # rest unrecorded so they stay pending for the next run.
+                n_deferred += 1
+                continue
             mb_read += size_mb
             if size_mb > MAX_SINGLE_FILE_MB:
                 record(con, item_key, md5, title, source, path, None, "too_large", None, round(size_mb, 2),
@@ -628,7 +633,8 @@ def run(max_docs, max_mb, status_only=False):
     print(f"✓ batch complete: {n_ok} converted ({n_ok - n_cloud_failed} cloud-copied, "
           f"{n_cloud_failed} cloud copy failed), {n_archive_gone} archive-not-persisted, "
           f"{n_fetch_failed} fetch failed, {n_convert_failed} convert failed, {n_too_large} too large, "
-          f"{n_unsupported} unsupported-source, {mb_read:.0f} MB fetched. "
+          f"{n_unsupported} unsupported-source, {n_deferred} deferred by --max-mb={max_mb:g}, "
+          f"{mb_read:.0f} MB fetched. "
           f"{remaining} still pending overall.")
     con.close()
 
