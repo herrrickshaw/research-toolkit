@@ -1,0 +1,7 @@
+duckdb
+pymupdf
+python-docx
+python-pptx
+openpyxl
+pytest
+ruff
