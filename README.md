@@ -3,7 +3,7 @@
 A methodology and reference implementation for turning a large, unsorted pile of documents (thousands of PDFs
 and ebooks scattered across cloud storage, buried inside old `.zip` archives) into a catalogued, full-text
 searchable research library. It discovers files with `rclone`, imports them into Zotero through its CRUD API,
-builds a DuckDB catalogue, converts every document to Markdown for [qmd](https://github.com/tobi/qmd) search,
+builds a DuckDB catalogue, converts every document to Markdown for qmd search,
 and derives daily "insights" reports. It contains no documents or content from any specific collection.
 
 > Status: maintained (runs daily on the author's Mac via launchd). Personal tooling: several scripts default to
