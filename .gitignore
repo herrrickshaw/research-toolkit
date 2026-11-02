@@ -34,3 +34,6 @@ sweep_stdout.log
 qmd_cloud_backup.log
 qmd_backup_snapshot/
 sweep_insert_stdout.log
+.venv/
+.pytest_cache/
+.ruff_cache/
