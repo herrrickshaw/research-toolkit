@@ -1,0 +1,119 @@
+{
+ "dry": {
+  "archives": "{\"source\": \"dropbox\", \"path\": \"root.zip\"}\n{\"path\": \"Papers/c.tgz\", \"size\": \"3\", \"mtime\": \"2021-01-01 00:00:00\", \"source\": \"dropbox\"}\n",
+  "checkpoint": "{\"remote\": \"dropbox:\", \"folder\": \"\", \"source\": \"dropbox\", \"found\": [[\"root.pdf\", \"10\", \"2020-01-02 03:04:05\"]], \"archives\": [{\"path\": \"root.zip\"}], \"skipped\": []}\n{\"remote\": \"dropbox:\", \"folder\": \"Papers\", \"source\": \"dropbox\", \"found\": [[\"Papers/a/one.pdf\", \"100\", \"2019-05-06 07:08:09\"], [\"Papers/b.docx\", \"200\", \"bad-time\"]], \"archives\": [{\"path\": \"Papers/c.tgz\", \"size\": \"3\", \"mtime\": \"2021-01-01 00:00:00\", \"source\": \"dropbox\"}], \"skipped\": []}\n{\"remote\": \"dropbox:\", \"folder\": \"Big\", \"source\": \"dropbox\", \"found\": [[\"Big/Sub1/deep.xlsx\", \"7\", \"2022-02-02 02:02:02\"]], \"archives\": [], \"skipped\": [{\"path\": \"dropbox:Big/Sub2\", \"reason\": \"no subfolders but still times out\"}]}\n{\"remote\": \"dropbox:\", \"folder\": \"Zotero\", \"source\": \"dropbox\", \"found\": [], \"archives\": [], \"skipped\": [{\"path\": \"dropbox:Zotero\", \"reason\": \"pathological_skip\"}]}\n{\"remote\": \"googledrive:\", \"folder\": \"\", \"source\": \"googledrive\", \"found\": [[\"g.epub\", \"9\", \"2018-01-01 00:00:00\"]], \"archives\": [], \"skipped\": []}\n{\"remote\": \"googledrive:\", \"folder\": \"Notes\", \"source\": \"googledrive\", \"found\": [[\"Notes/n.html\", \"4\", \"2023-03-03 03:03:03\"], [\"Notes/dup.pdf\", \"4\", \"2023-03-03 03:03:03\"]], \"archives\": [], \"skipped\": []}\n",
+  "log": "TS === sweeping dropbox: ===\nTS 4 top-level folder(s) on dropbox:\nTS   \u2713 dropbox:Papers \u2014 3 file(s) listed (depth 0)\nTS   \u2026 dropbox:Big timed out at depth 0, subdividing\nTS   \u2713 dropbox:Big/Sub1 \u2014 1 file(s) listed (depth 1)\nTS   \u2026 dropbox:Big/Sub2 timed out at depth 1, subdividing\nTS   \u2717 dropbox:Big/Sub2 \u2014 no subfolders, still times out, SKIPPED\nTS skip dropbox:Zotero (pathologically slow \u2014 Zotero's own per-item storage mirror)\nTS === sweeping googledrive: ===\nTS 1 top-level folder(s) on googledrive:\nTS   \u2713 googledrive:Notes \u2014 2 file(s) listed (depth 0)\nTS \nscan complete: 7 document file(s) found across both remotes, 2 archive file(s), 1 folder(s) skipped (too big even after subdivision).\nTS opening document_catalog.duckdb for dedup + insert...\nTS catalog has 1 path(s)\nTS new (not already catalogued): 7\nTS by category: {'uncategorized': 2, 'research': 5}\nTS by filetype: {'pdf': 3, 'docx': 1, 'xlsx': 1, 'epub': 1, 'html': 1}\nTS --dry-run: not writing to the database.\n",
+  "rows": [
+   [
+    "E1",
+    null,
+    "dup.pdf",
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  "skipped": "{\"path\": \"dropbox:Big/Sub2\", \"reason\": \"no subfolders but still times out\"}\n",
+  "stdout": "TS === sweeping dropbox: ===\nTS 4 top-level folder(s) on dropbox:\nTS   \u2713 dropbox:Papers \u2014 3 file(s) listed (depth 0)\nTS   \u2026 dropbox:Big timed out at depth 0, subdividing\nTS   \u2713 dropbox:Big/Sub1 \u2014 1 file(s) listed (depth 1)\nTS   \u2026 dropbox:Big/Sub2 timed out at depth 1, subdividing\nTS   \u2717 dropbox:Big/Sub2 \u2014 no subfolders, still times out, SKIPPED\nTS skip dropbox:Zotero (pathologically slow \u2014 Zotero's own per-item storage mirror)\nTS === sweeping googledrive: ===\nTS 1 top-level folder(s) on googledrive:\nTS   \u2713 googledrive:Notes \u2014 2 file(s) listed (depth 0)\nTS \nscan complete: 7 document file(s) found across both remotes, 2 archive file(s), 1 folder(s) skipped (too big even after subdivision).\nTS opening document_catalog.duckdb for dedup + insert...\nTS catalog has 1 path(s)\nTS new (not already catalogued): 7\nTS by category: {'uncategorized': 2, 'research': 5}\nTS by filetype: {'pdf': 3, 'docx': 1, 'xlsx': 1, 'epub': 1, 'html': 1}\nTS --dry-run: not writing to the database.\n"
+ },
+ "full": {
+  "archives": "{\"source\": \"dropbox\", \"path\": \"root.zip\"}\n{\"path\": \"Papers/c.tgz\", \"size\": \"3\", \"mtime\": \"2021-01-01 00:00:00\", \"source\": \"dropbox\"}\n",
+  "checkpoint": "{\"remote\": \"dropbox:\", \"folder\": \"\", \"source\": \"dropbox\", \"found\": [[\"root.pdf\", \"10\", \"2020-01-02 03:04:05\"]], \"archives\": [{\"path\": \"root.zip\"}], \"skipped\": []}\n{\"remote\": \"dropbox:\", \"folder\": \"Papers\", \"source\": \"dropbox\", \"found\": [[\"Papers/a/one.pdf\", \"100\", \"2019-05-06 07:08:09\"], [\"Papers/b.docx\", \"200\", \"bad-time\"]], \"archives\": [{\"path\": \"Papers/c.tgz\", \"size\": \"3\", \"mtime\": \"2021-01-01 00:00:00\", \"source\": \"dropbox\"}], \"skipped\": []}\n{\"remote\": \"dropbox:\", \"folder\": \"Big\", \"source\": \"dropbox\", \"found\": [[\"Big/Sub1/deep.xlsx\", \"7\", \"2022-02-02 02:02:02\"]], \"archives\": [], \"skipped\": [{\"path\": \"dropbox:Big/Sub2\", \"reason\": \"no subfolders but still times out\"}]}\n{\"remote\": \"dropbox:\", \"folder\": \"Zotero\", \"source\": \"dropbox\", \"found\": [], \"archives\": [], \"skipped\": [{\"path\": \"dropbox:Zotero\", \"reason\": \"pathological_skip\"}]}\n{\"remote\": \"googledrive:\", \"folder\": \"\", \"source\": \"googledrive\", \"found\": [[\"g.epub\", \"9\", \"2018-01-01 00:00:00\"]], \"archives\": [], \"skipped\": []}\n{\"remote\": \"googledrive:\", \"folder\": \"Notes\", \"source\": \"googledrive\", \"found\": [[\"Notes/n.html\", \"4\", \"2023-03-03 03:03:03\"], [\"Notes/dup.pdf\", \"4\", \"2023-03-03 03:03:03\"]], \"archives\": [], \"skipped\": []}\n",
+  "log": "TS === sweeping dropbox: ===\nTS 4 top-level folder(s) on dropbox:\nTS   \u2713 dropbox:Papers \u2014 3 file(s) listed (depth 0)\nTS   \u2026 dropbox:Big timed out at depth 0, subdividing\nTS   \u2713 dropbox:Big/Sub1 \u2014 1 file(s) listed (depth 1)\nTS   \u2026 dropbox:Big/Sub2 timed out at depth 1, subdividing\nTS   \u2717 dropbox:Big/Sub2 \u2014 no subfolders, still times out, SKIPPED\nTS skip dropbox:Zotero (pathologically slow \u2014 Zotero's own per-item storage mirror)\nTS === sweeping googledrive: ===\nTS 1 top-level folder(s) on googledrive:\nTS   \u2713 googledrive:Notes \u2014 2 file(s) listed (depth 0)\nTS \nscan complete: 7 document file(s) found across both remotes, 2 archive file(s), 1 folder(s) skipped (too big even after subdivision).\nTS opening document_catalog.duckdb for dedup + insert...\nTS catalog has 1 path(s)\nTS new (not already catalogued): 7\nTS by category: {'uncategorized': 2, 'research': 5}\nTS by filetype: {'pdf': 3, 'docx': 1, 'xlsx': 1, 'epub': 1, 'html': 1}\nTS \u2713 inserted 7 new row(s) into documents (1 -> 8).\n",
+  "rows": [
+   [
+    "E1",
+    null,
+    "dup.pdf",
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   [
+    "XL_0c7f61493cb4",
+    "deep.xlsx",
+    "Big/Sub1/deep.xlsx",
+    "dropbox",
+    "research",
+    "Big",
+    "xlsx",
+    "2022",
+    1643767322000
+   ],
+   [
+    "XL_81fe644dcb39",
+    "n.html",
+    "Notes/n.html",
+    "googledrive",
+    "research",
+    "Notes",
+    "html",
+    "2023",
+    1677812583000
+   ],
+   [
+    "XL_85a348516668",
+    "g.epub",
+    "g.epub",
+    "googledrive",
+    "uncategorized",
+    "(root)",
+    "epub",
+    "2018",
+    1514764800000
+   ],
+   [
+    "XL_8dd46b6723a9",
+    "one.pdf",
+    "Papers/a/one.pdf",
+    "dropbox",
+    "research",
+    "Papers",
+    "pdf",
+    "2019",
+    1557126489000
+   ],
+   [
+    "XL_967ec954d632",
+    "dup.pdf",
+    "Notes/dup.pdf",
+    "googledrive",
+    "research",
+    "Notes",
+    "pdf",
+    "2023",
+    1677812583000
+   ],
+   [
+    "XL_a6c079328800",
+    "root.pdf",
+    "root.pdf",
+    "dropbox",
+    "uncategorized",
+    "(root)",
+    "pdf",
+    "2020",
+    1577934245000
+   ],
+   [
+    "XL_d46f9e720700",
+    "b.docx",
+    "Papers/b.docx",
+    "dropbox",
+    "research",
+    "Papers",
+    "docx",
+    null,
+    null
+   ]
+  ],
+  "skipped": "{\"path\": \"dropbox:Big/Sub2\", \"reason\": \"no subfolders but still times out\"}\n",
+  "stdout": "TS === sweeping dropbox: ===\nTS 4 top-level folder(s) on dropbox:\nTS   \u2713 dropbox:Papers \u2014 3 file(s) listed (depth 0)\nTS   \u2026 dropbox:Big timed out at depth 0, subdividing\nTS   \u2713 dropbox:Big/Sub1 \u2014 1 file(s) listed (depth 1)\nTS   \u2026 dropbox:Big/Sub2 timed out at depth 1, subdividing\nTS   \u2717 dropbox:Big/Sub2 \u2014 no subfolders, still times out, SKIPPED\nTS skip dropbox:Zotero (pathologically slow \u2014 Zotero's own per-item storage mirror)\nTS === sweeping googledrive: ===\nTS 1 top-level folder(s) on googledrive:\nTS   \u2713 googledrive:Notes \u2014 2 file(s) listed (depth 0)\nTS \nscan complete: 7 document file(s) found across both remotes, 2 archive file(s), 1 folder(s) skipped (too big even after subdivision).\nTS opening document_catalog.duckdb for dedup + insert...\nTS catalog has 1 path(s)\nTS new (not already catalogued): 7\nTS by category: {'uncategorized': 2, 'research': 5}\nTS by filetype: {'pdf': 3, 'docx': 1, 'xlsx': 1, 'epub': 1, 'html': 1}\nTS \u2713 inserted 7 new row(s) into documents (1 -> 8).\n"
+ }
+}
