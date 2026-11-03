@@ -134,46 +134,9 @@ SOFFICE_FILTER_BY_FILETYPE = {
     "xls": ("csv:Text - txt - csv (StarCalc)", ".csv"),
 }
 
-# (text, error): exactly one of the two is None.
-Extraction = tuple[Optional[str], Optional[str]]
-
-
-# ---------------------------------------------------------------- catalog table
-
-def init_table(con: duckdb.DuckDBPyConnection) -> None:
-    """Create the resumable `fulltext_md` table (and migrate older copies)."""
-    con.execute("""
-        CREATE TABLE IF NOT EXISTS fulltext_md (
-            item_key VARCHAR PRIMARY KEY,
-            md5 VARCHAR,
-            title VARCHAR,
-            source VARCHAR,
-            catalog_path VARCHAR,
-            md_path VARCHAR,
-            status VARCHAR,        -- ok | archive_not_persisted | fetch_failed | convert_failed | too_large | unsupported_source
-            chars BIGINT,
-            source_mb DOUBLE,
-            converted_at TIMESTAMP,
-            error VARCHAR,
-            cloud_status VARCHAR,   -- ok | failed (only meaningful when status='ok')
-            cloud_pdf_path VARCHAR,
-            cloud_md_path VARCHAR
-        )
-    """)
-    existing_cols = {r[0] for r in con.execute("describe fulltext_md").fetchall()}
-    for col in ("cloud_status", "cloud_pdf_path", "cloud_md_path"):
-        if col not in existing_cols:
-            con.execute(f"ALTER TABLE fulltext_md ADD COLUMN {col} VARCHAR")
-
-
-def record(con, item_key, md5, title, source, catalog_path, md_path, status, chars, source_mb, error,
-           cloud_status=None, cloud_pdf_path=None, cloud_md_path=None) -> None:
-    """Insert one terminal outcome row; a re-run never overwrites an existing row."""
-    con.execute(
-        "insert into fulltext_md values (?,?,?,?,?,?,?,?,?,now(),?,?,?,?) on conflict (item_key) do nothing",
-        [item_key, md5, title, source, catalog_path, md_path, status, chars, source_mb, error,
-         cloud_status, cloud_pdf_path, cloud_md_path],
-    )
+from pdf2md_catalog import init_table, print_status, record  # noqa: E402,F401  (re-exported: public names)
+from pdf2md_extract import (  # noqa: E402,F401
+    Extraction, extract_text_docx, extract_text_fitz, extract_text_pptx, extract_text_xlsx)
 
 
 # ---------------------------------------------------------------- naming helpers
@@ -213,80 +176,6 @@ def cloud_object_path(source: str, item_key: str, title: Optional[str], suffix: 
 
 
 # ---------------------------------------------------------------- extraction
-
-def extract_text_fitz(path: Path) -> Extraction:
-    """pdf and epub — fitz opens both the same way. See docstring point 7:
-    ~0.04-0.4s/doc in-process versus ~4-5s/doc via a markitdown subprocess."""
-    import fitz  # PyMuPDF
-
-    # MuPDF prints malformed-CSS/XObject warnings straight to stderr for a lot
-    # of real-world epub/pdf files — cosmetic noise (extraction still succeeds),
-    # but it floods the log at thousands-of-docs scale. Silence it.
-    fitz.TOOLS.mupdf_display_errors(False)
-    fitz.TOOLS.mupdf_display_warnings(False)
-    doc = fitz.open(path)
-    try:
-        if doc.needs_pass:
-            return None, "password-protected document"
-        return "\n\n".join(page.get_text() for page in doc), None
-    finally:
-        doc.close()
-
-
-def extract_text_docx(path: Path) -> Extraction:
-    """Paragraphs, then tables as `a | b` rows."""
-    import docx as python_docx
-
-    d = python_docx.Document(str(path))
-    parts = [p.text for p in d.paragraphs if p.text.strip()]
-    for table in d.tables:
-        for row in table.rows:
-            parts.append(" | ".join(cell.text for cell in row.cells))
-    return "\n\n".join(parts), None
-
-
-def extract_text_pptx(path: Path) -> Extraction:
-    """One `## Slide N` block per non-empty slide (text frames and tables)."""
-    import pptx as python_pptx
-
-    prs = python_pptx.Presentation(str(path))
-    parts = []
-    for i, slide in enumerate(prs.slides, 1):
-        lines = [f"## Slide {i}"]
-        for shape in slide.shapes:
-            if shape.has_text_frame:
-                for para in shape.text_frame.paragraphs:
-                    line = "".join(run.text for run in para.runs)
-                    if line.strip():
-                        lines.append(line)
-            if shape.has_table:
-                for row in shape.table.rows:
-                    lines.append(" | ".join(cell.text for cell in row.cells))
-        if len(lines) > 1:
-            parts.append("\n".join(lines))
-    return "\n\n".join(parts), None
-
-
-def extract_text_xlsx(path: Path) -> Extraction:
-    """No .xlsx currently exists in the catalog (the original import's
-    ALLOWED_EXTENSIONS never included it) — kept for completeness/future
-    catalog extensions rather than anything this run will actually hit."""
-    import openpyxl
-
-    wb = openpyxl.load_workbook(str(path), read_only=True, data_only=True)
-    try:
-        parts = []
-        for ws in wb.worksheets:
-            lines = [f"## Sheet: {ws.title}"]
-            for row in ws.iter_rows(values_only=True):
-                if any(c is not None for c in row):
-                    lines.append(" | ".join("" if c is None else str(c) for c in row))
-            if len(lines) > 1:
-                parts.append("\n".join(lines))
-        return "\n\n".join(parts), None
-    finally:
-        wb.close()
-
 
 def extract_text_markitdown_fallback(path: Path) -> Extraction:
     """Slow-path subprocess fallback for filetypes without a fast in-process
@@ -485,31 +374,6 @@ class BatchCounters:
     too_large: int = 0
     cloud_failed: int = 0
     mb_read: float = 0.0
-
-
-def print_status(con, total_docs: int) -> None:
-    """`--status`: progress summary from the fulltext_md table; no side effects."""
-    done = con.execute("select count(*) from fulltext_md").fetchone()[0]
-    ok = con.execute("select count(*) from fulltext_md where status='ok'").fetchone()[0]
-    by_status = con.execute("select status, count(*) from fulltext_md group by 1 order by 2 desc").fetchall()
-    by_cloud = con.execute(
-        "select cloud_status, count(*) from fulltext_md where status='ok' group by 1 order by 2 desc"
-    ).fetchall()
-    avg_chars = con.execute("select avg(chars) from fulltext_md where status='ok'").fetchone()[0]
-    near_empty = con.execute(
-        "select count(*) from fulltext_md where status='ok' and chars < 200"
-    ).fetchone()[0]
-    print(f"catalog documents (non-duplicate, all filetypes): {total_docs}")
-    print(f"processed so far:             {done} ({ok} converted)")
-    print(f"remaining:                    {total_docs - done}")
-    for s, c in by_status:
-        print(f"  {s}: {c}")
-    print("cloud copy-back (of converted items):")
-    for s, c in by_cloud:
-        print(f"  {s}: {c}")
-    if ok:
-        print(f"avg chars/doc: {avg_chars:.0f} | near-empty (<200 chars, likely scanned, no OCR run): "
-              f"{near_empty} ({100*near_empty/ok:.1f}%)")
 
 
 def triage_pending(con, pending: list, counters: BatchCounters):
