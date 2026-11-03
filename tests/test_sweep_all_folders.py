@@ -44,8 +44,6 @@ def fake_run(cmd, capture_output, text, timeout):
     recursive = "-R" in cmd
     key = (remote, "", recursive)
     if key not in LISTINGS or LISTINGS[key] is None:
-        if timeout > 180 * 2 and key in LISTINGS:  # the x3 retry for a leaf folder stays unlistable
-            raise subprocess.TimeoutExpired(cmd, timeout)
         raise subprocess.TimeoutExpired(cmd, timeout)
     return subprocess.CompletedProcess(cmd, 0, "\n".join(LISTINGS[key]), "")
 
