@@ -1,0 +1,1772 @@
+{
+ "result": {
+  "claims": [
+   [
+    "T20000000",
+    "fbb9899eb343930e4f7d81580e28f80db3a4f823",
+    "market_size",
+    "design global panel",
+    "USD",
+    "5000000000.0",
+    "2024",
+    "irradiance array tracker wafer analysis results method study report evidence sample outcome review model parameter design The global panel market was valued at USD 5 billion in 2024 and is expected to grow. analysis results method study report evidence sample outcome review model"
+   ],
+   [
+    "T20000001",
+    "a193aef3e2da848a139c550039e3f528126c291b",
+    "cagr_pct",
+    "design global panel",
+    "None",
+    "7.5",
+    "None",
+    "nalysis results method study report evidence sample outcome review model parameter design The global panel market is projected to reach USD 20 billion in 2024; CAGR of 7.5%. analysis results method study report evidence sample outco"
+   ],
+   [
+    "T20000001",
+    "a193aef3e2da848a139c550039e3f528126c291b",
+    "market_size",
+    "design global panel",
+    "USD",
+    "20000000000.0",
+    "2024",
+    "fer array photovoltaic analysis results method study report evidence sample outcome review model parameter design The global panel market is projected to reach USD 20 billion in 2024; CAGR of 7.5%. analysis results method study report evidence sample outcome review model paramete"
+   ]
+  ],
+  "claims_done": [
+   [
+    "021b148276973f6d6bc8648bc5397b00cf49c333"
+   ],
+   [
+    "109e46a7ee3e58256ff42ac7c500d16f2125cec8"
+   ],
+   [
+    "1618ec796f720f6dea2612dacd8efc276e1b24db"
+   ],
+   [
+    "177d6b26c4682eeb23c56261e9b2c9c7e065112f"
+   ],
+   [
+    "25e9cdcbdfd5d93d740bc9f70bb18b4898bf6008"
+   ],
+   [
+    "27061398b3436a8e8a04129406c1ca5eadeb45eb"
+   ],
+   [
+    "29d88f6fff73e1effd457a829a3d5c3349f052bf"
+   ],
+   [
+    "29f79a2e1b88f6ad8deca2f0e96f9d5987894a84"
+   ],
+   [
+    "2fa94d8248cc8c2c3a184b11803f4bbaa2e6bea9"
+   ],
+   [
+    "30858c32de8655161f27f4a5e24f9e88d82024e0"
+   ],
+   [
+    "313c2e611cc6b24e48f125570448e7b6e86613c7"
+   ],
+   [
+    "42ffea407fbb81fbba3fa7cc5ab5204a4d51f8fb"
+   ],
+   [
+    "4655ccff0b5589304a6aaf41360ff6d7b59136b6"
+   ],
+   [
+    "4d884e3412e5daddd4d5f7cb5782bc5c797bcd2c"
+   ],
+   [
+    "4f905422280b447d353853e73c13ba5f0a90ae06"
+   ],
+   [
+    "550d7710841fd928bdb55706a4057daa1c597d77"
+   ],
+   [
+    "55b32793184b22b677e1df6494512f6c2bfd94a6"
+   ],
+   [
+    "73e7df6b1fdb4a6f2e15c51d2e71387285adbfac"
+   ],
+   [
+    "7a1e00905312b4076ab3460bc02429c820f96391"
+   ],
+   [
+    "81f735165c6ec345ef72c8f94d955ac78e54a2f0"
+   ],
+   [
+    "83d9868e7eac7c239c62dd227053dbda959dff66"
+   ],
+   [
+    "8a440436554b112b0ec4078a7a3680ebbe270a8f"
+   ],
+   [
+    "8e4d4954e00316842d760c2a8faa805246a1e0ee"
+   ],
+   [
+    "9947dfa98b0181c595d391c3b8dba5e0f0ffbe2f"
+   ],
+   [
+    "9bb47723056c2abe15dffede547a19808d29bf14"
+   ],
+   [
+    "9bb8f234fd88aa9eb31c4b24cc2cfe0ac4daa726"
+   ],
+   [
+    "9dbaf8e25a091e7af33a21399748e69db507497c"
+   ],
+   [
+    "a004d5991dbf22ed8d3690f5ae3817c3f02ab7a0"
+   ],
+   [
+    "a193aef3e2da848a139c550039e3f528126c291b"
+   ],
+   [
+    "a2cec245b04f50652e9d10cb6ffcd3f0303e8152"
+   ],
+   [
+    "a776106238112accb684496f1128dd6c086f650f"
+   ],
+   [
+    "af9aebcda7590de92a1e44f6921decfabe58da2f"
+   ],
+   [
+    "cc35be2bcecf9578d0b08c50a53d54e6e407954e"
+   ],
+   [
+    "d2ba96b97dc6a606e7db3c74414f0d2bf524ae39"
+   ],
+   [
+    "da84b96db1cb761c4d001f3e64cfba6fce101d20"
+   ],
+   [
+    "db60411dd49ef3a303c0e7873e6dc61e580211f8"
+   ],
+   [
+    "e492003ffdb63a1a001a5e43fb803050d344ce79"
+   ],
+   [
+    "efe27b7a8cf67ab0643f921a0092316dd4314259"
+   ],
+   [
+    "fbb9899eb343930e4f7d81580e28f80db3a4f823"
+   ]
+  ],
+  "clusters": [
+   [
+    "0",
+    "plankton, upwelling, fisheries, tide, marine, sediment",
+    "8",
+    "2019",
+    "12.5",
+    "8",
+    "0"
+   ],
+   [
+    "1",
+    "panel, silicon, photovoltaic, module, wafer, irradiance",
+    "8",
+    "2019",
+    "25.0",
+    "8",
+    "0"
+   ],
+   [
+    "2",
+    "yield, monetary, credit, deposit, sovereign, inflation",
+    "8",
+    "2018",
+    "12.5",
+    "8",
+    "1"
+   ],
+   [
+    "3",
+    "pathway, binding, genome, mutation, enzyme, sequence",
+    "3",
+    "2018",
+    "33.3",
+    "3",
+    "0"
+   ],
+   [
+    "4",
+    "cycle, storage, grid, lithium, anode, capacity",
+    "3",
+    "2021",
+    "33.3",
+    "3",
+    "0"
+   ],
+   [
+    "5",
+    "voltage, electrolyte, anode, cathode, lithium, charging",
+    "4",
+    "2014",
+    "0.0",
+    "4",
+    "0"
+   ],
+   [
+    "6",
+    "allele, receptor, expression, pathway, sequence, protein",
+    "5",
+    "2018",
+    "0.0",
+    "5",
+    "0"
+   ],
+   [
+    "7",
+    "electrolyte, charging, capacity, voltage, storage, cathode",
+    "1",
+    "2018",
+    "0.0",
+    "1",
+    "0"
+   ]
+  ],
+  "contradictions": [
+   [
+    "design global panel",
+    "USD",
+    "2024",
+    "2",
+    "5000000000.0",
+    "20000000000.0",
+    "4.0",
+    "T20000000",
+    "T20000001",
+    "irradiance array tracker wafer analysis results method study report evidence sample outcome review model parameter design The global panel market was valued at USD 5 billion in 2024 and is expected to grow. analysis results method study report evidence sample outcome review model",
+    "fer array photovoltaic analysis results method study report evidence sample outcome review model parameter design The global panel market is projected to reach USD 20 billion in 2024; CAGR of 7.5%. analysis results method study report evidence sample outcome review model paramete"
+   ]
+  ],
+  "digest": "# Research digest \u2014 TODAY\n\n39 baseline digest: documents converted in the last 7 days.\n\n- **T00000000_battery study 0** (research, 2015, 1,089 chars) \u2014 cluster: voltage, electrolyte, anode, cathode, lithium, charging\n- **T00000001_battery study 1** (research, 2012, 1,074 chars) \u2014 cluster: voltage, electrolyte, anode, cathode, lithium, charging\n- **T00000002_battery study 2** (research, 2014, 1,077 chars) \u2014 cluster: voltage, electrolyte, anode, cathode, lithium, charging\n- **T00000003_battery study 3** (research, 2018, 1,087 chars) \u2014 cluster: electrolyte, charging, capacity, voltage, storage, cathode\n- **T00000004_battery study 4** (research, 2018, 1,068 chars) \u2014 cluster: cycle, storage, grid, lithium, anode, capacity\n- **T00000005_battery study 5** (research, 2020, 1,075 chars) \u2014 cluster: voltage, electrolyte, anode, cathode, lithium, charging\n- **T00000006_battery study 6** (research, 2021, 1,077 chars) \u2014 cluster: cycle, storage, grid, lithium, anode, capacity\n- **T00000007_battery study 7** (research, 2024, 1,071 chars) \u2014 cluster: cycle, storage, grid, lithium, anode, capacity\n- **T10000000_genome study 0** (research, 2015, 1,108 chars) \u2014 cluster: allele, receptor, expression, pathway, sequence, protein\n- **T10000001_genome study 1** (research, 2012, 1,104 chars) \u2014 cluster: pathway, binding, genome, mutation, enzyme, sequence\n- **T10000002_genome study 2** (research, 2014, 1,107 chars) \u2014 cluster: allele, receptor, expression, pathway, sequence, protein\n- **T10000003_genome study 3** (research, 2018, 1,108 chars) \u2014 cluster: allele, receptor, expression, pathway, sequence, protein\n- **T10000004_genome study 4** (research, 2018, 1,100 chars) \u2014 cluster: pathway, binding, genome, mutation, enzyme, sequence\n- **T10000005_genome study 5** (research, 2020, 1,111 chars) \u2014 cluster: allele, receptor, expression, pathway, sequence, protein\n- **T10000006_genome study 6** (research, 2021, 1,104 chars) \u2014 cluster: allele, receptor, expression, pathway, sequence, protein\n- **T10000007_genome study 7** (research, 2024, 1,109 chars) \u2014 cluster: pathway, binding, genome, mutation, enzyme, sequence\n- **T20000000_solar study 0** (research, 2024, 1,232 chars) \u2014 cluster: panel, silicon, photovoltaic, module, wafer, irradiance \u2014 design global panel market USD 5.0bn by 2024\n- **T20000001_solar study 1** (research, 2012, 1,231 chars) \u2014 cluster: panel, silicon, photovoltaic, module, wafer, irradiance \u2014 design global panel market USD 20.0bn by 2024\n- **T20000002_solar study 2** (research, 2014, 1,147 chars) \u2014 cluster: panel, silicon, photovoltaic, module, wafer, irradiance\n- **T20000003_solar study 3** (research, 2018, 1,147 chars) \u2014 cluster: panel, silicon, photovoltaic, module, wafer, irradiance\n- **T20000004_solar study 4** (research, 2018, 1,147 chars) \u2014 cluster: panel, silicon, photovoltaic, module, wafer, irradiance\n- **T20000005_solar study 5** (research, 2020, 1,147 chars) \u2014 cluster: panel, silicon, photovoltaic, module, wafer, irradiance\n- **T20000006_solar study 6** (research, 2021, 1,147 chars) \u2014 cluster: panel, silicon, photovoltaic, module, wafer, irradiance\n- **T20000007_solar study 7** (research, 2024, 1,147 chars) \u2014 cluster: panel, silicon, photovoltaic, module, wafer, irradiance\n- **T30000000_bank study 0** (research, 2015, 1,171 chars) \u2014 cluster: yield, monetary, credit, deposit, sovereign, inflation\n- **T30000001_bank study 1** (research, 2012, 1,171 chars) \u2014 cluster: yield, monetary, credit, deposit, sovereign, inflation\n- **T30000002_bank study 2** (research, 2014, 1,171 chars) \u2014 cluster: yield, monetary, credit, deposit, sovereign, inflation\n- **T30000003_bank study 3** (research, 2018, 1,171 chars) \u2014 cluster: yield, monetary, credit, deposit, sovereign, inflation\n- **T30000004_bank study 4** (research, 2018, 1,171 chars) \u2014 cluster: yield, monetary, credit, deposit, sovereign, inflation\n- **T30000005_bank study 5** (research, 2020, 1,171 chars) \u2014 cluster: yield, monetary, credit, deposit, sovereign, inflation\n- **T30000006_bank study 6** (research, 2021, 1,171 chars) \u2014 cluster: yield, monetary, credit, deposit, sovereign, inflation\n- **T30000007_bank study 7** (research, 2024, 1,171 chars) \u2014 cluster: yield, monetary, credit, deposit, sovereign, inflation\n- **T40000000_ocean study 0** (research, 2015, 1,107 chars) \u2014 cluster: plankton, upwelling, fisheries, tide, marine, sediment\n- **T40000001_ocean study 1** (research, 2012, 1,107 chars) \u2014 cluster: plankton, upwelling, fisheries, tide, marine, sediment\n- **T40000002_ocean study 2** (research, 2014, 1,107 chars) \u2014 cluster: plankton, upwelling, fisheries, tide, marine, sediment\n- **T40000003_ocean study 3** (research, 2018, 1,107 chars) \u2014 cluster: plankton, upwelling, fisheries, tide, marine, sediment\n- **T40000005_ocean study 5** (research, 2020, 1,107 chars) \u2014 cluster: plankton, upwelling, fisheries, tide, marine, sediment\n- **T40000006_ocean study 6** (research, 2021, 1,107 chars) \u2014 cluster: plankton, upwelling, fisheries, tide, marine, sediment\n- **T40000007_ocean study 7** (research, 2024, 1,107 chars) \u2014 cluster: plankton, upwelling, fisheries, tide, marine, sediment\n",
+  "doc_clusters": [
+   [
+    "CV000001",
+    "0"
+   ],
+   [
+    "OW000001",
+    "2"
+   ],
+   [
+    "T00000000",
+    "5"
+   ],
+   [
+    "T00000001",
+    "5"
+   ],
+   [
+    "T00000002",
+    "5"
+   ],
+   [
+    "T00000003",
+    "7"
+   ],
+   [
+    "T00000004",
+    "4"
+   ],
+   [
+    "T00000005",
+    "5"
+   ],
+   [
+    "T00000006",
+    "4"
+   ],
+   [
+    "T00000007",
+    "4"
+   ],
+   [
+    "T00000008",
+    "4"
+   ],
+   [
+    "T10000000",
+    "6"
+   ],
+   [
+    "T10000001",
+    "3"
+   ],
+   [
+    "T10000002",
+    "6"
+   ],
+   [
+    "T10000003",
+    "6"
+   ],
+   [
+    "T10000004",
+    "3"
+   ],
+   [
+    "T10000005",
+    "6"
+   ],
+   [
+    "T10000006",
+    "6"
+   ],
+   [
+    "T10000007",
+    "3"
+   ],
+   [
+    "T10000008",
+    "3"
+   ],
+   [
+    "T20000000",
+    "1"
+   ],
+   [
+    "T20000001",
+    "1"
+   ],
+   [
+    "T20000002",
+    "1"
+   ],
+   [
+    "T20000003",
+    "1"
+   ],
+   [
+    "T20000004",
+    "1"
+   ],
+   [
+    "T20000005",
+    "1"
+   ],
+   [
+    "T20000006",
+    "1"
+   ],
+   [
+    "T20000007",
+    "1"
+   ],
+   [
+    "T20000008",
+    "1"
+   ],
+   [
+    "T30000000",
+    "2"
+   ],
+   [
+    "T30000001",
+    "2"
+   ],
+   [
+    "T30000002",
+    "2"
+   ],
+   [
+    "T30000003",
+    "2"
+   ],
+   [
+    "T30000004",
+    "2"
+   ],
+   [
+    "T30000005",
+    "2"
+   ],
+   [
+    "T30000006",
+    "2"
+   ],
+   [
+    "T30000007",
+    "2"
+   ],
+   [
+    "T30000008",
+    "2"
+   ],
+   [
+    "T40000000",
+    "0"
+   ],
+   [
+    "T40000001",
+    "0"
+   ],
+   [
+    "T40000002",
+    "0"
+   ],
+   [
+    "T40000003",
+    "0"
+   ],
+   [
+    "T40000004",
+    "0"
+   ],
+   [
+    "T40000005",
+    "0"
+   ],
+   [
+    "T40000006",
+    "0"
+   ],
+   [
+    "T40000007",
+    "0"
+   ],
+   [
+    "T40000008",
+    "0"
+   ]
+  ],
+  "docs": [
+   [
+    "CV000001",
+    "None",
+    "research",
+    "p.pdf",
+    "2021",
+    "1107",
+    "77b6d7365f21e43eab49c804a6331d8c0894119e",
+    "True",
+    "2026-11-03",
+    "literature",
+    "False"
+   ],
+   [
+    "OW000001",
+    "None",
+    "backup",
+    "x.md",
+    "2025",
+    "1205",
+    "8926425d7b61967e7f85734a5d4ebe1697c84b42",
+    "True",
+    "2026-11-03",
+    "own",
+    "False"
+   ],
+   [
+    "T00000000",
+    "T00000000_battery study 0",
+    "research",
+    "battery",
+    "2015",
+    "1089",
+    "a2cec245b04f50652e9d10cb6ffcd3f0303e8152",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T00000001",
+    "T00000001_battery study 1",
+    "research",
+    "battery",
+    "2012",
+    "1074",
+    "27061398b3436a8e8a04129406c1ca5eadeb45eb",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T00000002",
+    "T00000002_battery study 2",
+    "research",
+    "battery",
+    "2014",
+    "1077",
+    "7a1e00905312b4076ab3460bc02429c820f96391",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T00000003",
+    "T00000003_battery study 3",
+    "research",
+    "battery",
+    "2018",
+    "1087",
+    "db60411dd49ef3a303c0e7873e6dc61e580211f8",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T00000004",
+    "T00000004_battery study 4",
+    "research",
+    "battery",
+    "2018",
+    "1068",
+    "29f79a2e1b88f6ad8deca2f0e96f9d5987894a84",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T00000005",
+    "T00000005_battery study 5",
+    "research",
+    "battery",
+    "2020",
+    "1075",
+    "29d88f6fff73e1effd457a829a3d5c3349f052bf",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T00000006",
+    "T00000006_battery study 6",
+    "research",
+    "battery",
+    "2021",
+    "1077",
+    "d2ba96b97dc6a606e7db3c74414f0d2bf524ae39",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T00000007",
+    "T00000007_battery study 7",
+    "research",
+    "battery",
+    "2024",
+    "1071",
+    "e492003ffdb63a1a001a5e43fb803050d344ce79",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T00000008",
+    "T00000008_battery study 8",
+    "research",
+    "battery",
+    "2026",
+    "1071",
+    "e492003ffdb63a1a001a5e43fb803050d344ce79",
+    "False",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T10000000",
+    "T10000000_genome study 0",
+    "research",
+    "genome",
+    "2015",
+    "1108",
+    "8e4d4954e00316842d760c2a8faa805246a1e0ee",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T10000001",
+    "T10000001_genome study 1",
+    "research",
+    "genome",
+    "2012",
+    "1104",
+    "cc35be2bcecf9578d0b08c50a53d54e6e407954e",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T10000002",
+    "T10000002_genome study 2",
+    "research",
+    "genome",
+    "2014",
+    "1107",
+    "9947dfa98b0181c595d391c3b8dba5e0f0ffbe2f",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T10000003",
+    "T10000003_genome study 3",
+    "research",
+    "genome",
+    "2018",
+    "1108",
+    "a004d5991dbf22ed8d3690f5ae3817c3f02ab7a0",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T10000004",
+    "T10000004_genome study 4",
+    "research",
+    "genome",
+    "2018",
+    "1100",
+    "da84b96db1cb761c4d001f3e64cfba6fce101d20",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T10000005",
+    "T10000005_genome study 5",
+    "research",
+    "genome",
+    "2020",
+    "1111",
+    "4655ccff0b5589304a6aaf41360ff6d7b59136b6",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T10000006",
+    "T10000006_genome study 6",
+    "research",
+    "genome",
+    "2021",
+    "1104",
+    "efe27b7a8cf67ab0643f921a0092316dd4314259",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T10000007",
+    "T10000007_genome study 7",
+    "research",
+    "genome",
+    "2024",
+    "1109",
+    "1618ec796f720f6dea2612dacd8efc276e1b24db",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T10000008",
+    "T10000008_genome study 8",
+    "research",
+    "genome",
+    "2026",
+    "1109",
+    "1618ec796f720f6dea2612dacd8efc276e1b24db",
+    "False",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T20000000",
+    "T20000000_solar study 0",
+    "research",
+    "solar",
+    "2024",
+    "1232",
+    "fbb9899eb343930e4f7d81580e28f80db3a4f823",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T20000001",
+    "T20000001_solar study 1",
+    "research",
+    "solar",
+    "2012",
+    "1231",
+    "a193aef3e2da848a139c550039e3f528126c291b",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T20000002",
+    "T20000002_solar study 2",
+    "research",
+    "solar",
+    "2014",
+    "1147",
+    "73e7df6b1fdb4a6f2e15c51d2e71387285adbfac",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T20000003",
+    "T20000003_solar study 3",
+    "research",
+    "solar",
+    "2018",
+    "1147",
+    "30858c32de8655161f27f4a5e24f9e88d82024e0",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T20000004",
+    "T20000004_solar study 4",
+    "research",
+    "solar",
+    "2018",
+    "1147",
+    "4f905422280b447d353853e73c13ba5f0a90ae06",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T20000005",
+    "T20000005_solar study 5",
+    "research",
+    "solar",
+    "2020",
+    "1147",
+    "83d9868e7eac7c239c62dd227053dbda959dff66",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T20000006",
+    "T20000006_solar study 6",
+    "research",
+    "solar",
+    "2021",
+    "1147",
+    "25e9cdcbdfd5d93d740bc9f70bb18b4898bf6008",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T20000007",
+    "T20000007_solar study 7",
+    "research",
+    "solar",
+    "2024",
+    "1147",
+    "8a440436554b112b0ec4078a7a3680ebbe270a8f",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T20000008",
+    "T20000008_solar study 8",
+    "research",
+    "solar",
+    "2026",
+    "1147",
+    "8a440436554b112b0ec4078a7a3680ebbe270a8f",
+    "False",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T30000000",
+    "T30000000_bank study 0",
+    "research",
+    "bank",
+    "2015",
+    "1171",
+    "81f735165c6ec345ef72c8f94d955ac78e54a2f0",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T30000001",
+    "T30000001_bank study 1",
+    "research",
+    "bank",
+    "2012",
+    "1171",
+    "177d6b26c4682eeb23c56261e9b2c9c7e065112f",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T30000002",
+    "T30000002_bank study 2",
+    "research",
+    "bank",
+    "2014",
+    "1171",
+    "313c2e611cc6b24e48f125570448e7b6e86613c7",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T30000003",
+    "T30000003_bank study 3",
+    "research",
+    "bank",
+    "2018",
+    "1171",
+    "42ffea407fbb81fbba3fa7cc5ab5204a4d51f8fb",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T30000004",
+    "T30000004_bank study 4",
+    "research",
+    "bank",
+    "2018",
+    "1171",
+    "2fa94d8248cc8c2c3a184b11803f4bbaa2e6bea9",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T30000005",
+    "T30000005_bank study 5",
+    "research",
+    "bank",
+    "2020",
+    "1171",
+    "550d7710841fd928bdb55706a4057daa1c597d77",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T30000006",
+    "T30000006_bank study 6",
+    "research",
+    "bank",
+    "2021",
+    "1171",
+    "af9aebcda7590de92a1e44f6921decfabe58da2f",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T30000007",
+    "T30000007_bank study 7",
+    "research",
+    "bank",
+    "2024",
+    "1171",
+    "4d884e3412e5daddd4d5f7cb5782bc5c797bcd2c",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T30000008",
+    "T30000008_bank study 8",
+    "research",
+    "bank",
+    "2026",
+    "1171",
+    "4d884e3412e5daddd4d5f7cb5782bc5c797bcd2c",
+    "False",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T40000000",
+    "T40000000_ocean study 0",
+    "research",
+    "ocean",
+    "2015",
+    "1107",
+    "9bb47723056c2abe15dffede547a19808d29bf14",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T40000001",
+    "T40000001_ocean study 1",
+    "research",
+    "ocean",
+    "2012",
+    "1107",
+    "109e46a7ee3e58256ff42ac7c500d16f2125cec8",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T40000002",
+    "T40000002_ocean study 2",
+    "research",
+    "ocean",
+    "2014",
+    "1107",
+    "9bb8f234fd88aa9eb31c4b24cc2cfe0ac4daa726",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T40000003",
+    "T40000003_ocean study 3",
+    "research",
+    "ocean",
+    "2018",
+    "1107",
+    "9dbaf8e25a091e7af33a21399748e69db507497c",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T40000004",
+    "T40000004_ocean study 4",
+    "research",
+    "ocean",
+    "2018",
+    "1107",
+    "77b6d7365f21e43eab49c804a6331d8c0894119e",
+    "False",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T40000005",
+    "T40000005_ocean study 5",
+    "research",
+    "ocean",
+    "2020",
+    "1107",
+    "a776106238112accb684496f1128dd6c086f650f",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T40000006",
+    "T40000006_ocean study 6",
+    "research",
+    "ocean",
+    "2021",
+    "1107",
+    "021b148276973f6d6bc8648bc5397b00cf49c333",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T40000007",
+    "T40000007_ocean study 7",
+    "research",
+    "ocean",
+    "2024",
+    "1107",
+    "55b32793184b22b677e1df6494512f6c2bfd94a6",
+    "True",
+    "2026-11-03",
+    "literature",
+    "True"
+   ],
+   [
+    "T40000008",
+    "T40000008_ocean study 8",
+    "research",
+    "ocean",
+    "2026",
+    "1107",
+    "55b32793184b22b677e1df6494512f6c2bfd94a6",
+    "False",
+    "2026-11-03",
+    "literature",
+    "True"
+   ]
+  ],
+  "files": [
+   "digest_TODAY.md",
+   "report_latest.md",
+   "research_insights.duckdb"
+  ],
+  "memory_links": [
+   [
+    "project_battery_notes",
+    "lithium cathode storage grid notes",
+    "T00000000",
+    "T00000000_battery study 0",
+    "5",
+    "0.7754"
+   ],
+   [
+    "project_battery_notes",
+    "lithium cathode storage grid notes",
+    "T00000003",
+    "T00000003_battery study 3",
+    "7",
+    "0.7754"
+   ],
+   [
+    "project_battery_notes",
+    "lithium cathode storage grid notes",
+    "T00000005",
+    "T00000005_battery study 5",
+    "5",
+    "0.7914"
+   ],
+   [
+    "project_battery_notes",
+    "lithium cathode storage grid notes",
+    "T00000006",
+    "T00000006_battery study 6",
+    "4",
+    "0.784"
+   ],
+   [
+    "project_battery_notes",
+    "lithium cathode storage grid notes",
+    "T00000007",
+    "T00000007_battery study 7",
+    "4",
+    "0.7754"
+   ]
+  ],
+  "near_dups": [
+   [
+    "T00000000",
+    "T00000000_battery study 0",
+    "T00000001",
+    "T00000001_battery study 1",
+    "0.9987"
+   ],
+   [
+    "T00000000",
+    "T00000000_battery study 0",
+    "T00000002",
+    "T00000002_battery study 2",
+    "0.9988"
+   ],
+   [
+    "T00000000",
+    "T00000000_battery study 0",
+    "T00000003",
+    "T00000003_battery study 3",
+    "0.9988"
+   ],
+   [
+    "T00000000",
+    "T00000000_battery study 0",
+    "T00000005",
+    "T00000005_battery study 5",
+    "0.9985"
+   ],
+   [
+    "T00000000",
+    "T00000000_battery study 0",
+    "T00000006",
+    "T00000006_battery study 6",
+    "0.9986"
+   ],
+   [
+    "T00000001",
+    "T00000001_battery study 1",
+    "T00000002",
+    "T00000002_battery study 2",
+    "0.9986"
+   ],
+   [
+    "T00000001",
+    "T00000001_battery study 1",
+    "T00000003",
+    "T00000003_battery study 3",
+    "0.9988"
+   ],
+   [
+    "T00000001",
+    "T00000001_battery study 1",
+    "T00000004",
+    "T00000004_battery study 4",
+    "0.9988"
+   ],
+   [
+    "T00000001",
+    "T00000001_battery study 1",
+    "T00000006",
+    "T00000006_battery study 6",
+    "0.9989"
+   ],
+   [
+    "T00000002",
+    "T00000002_battery study 2",
+    "T00000003",
+    "T00000003_battery study 3",
+    "0.9987"
+   ],
+   [
+    "T00000002",
+    "T00000002_battery study 2",
+    "T00000004",
+    "T00000004_battery study 4",
+    "0.9987"
+   ],
+   [
+    "T00000002",
+    "T00000002_battery study 2",
+    "T00000005",
+    "T00000005_battery study 5",
+    "0.9988"
+   ],
+   [
+    "T00000003",
+    "T00000003_battery study 3",
+    "T00000004",
+    "T00000004_battery study 4",
+    "0.9987"
+   ],
+   [
+    "T00000003",
+    "T00000003_battery study 3",
+    "T00000005",
+    "T00000005_battery study 5",
+    "0.9988"
+   ],
+   [
+    "T00000003",
+    "T00000003_battery study 3",
+    "T00000006",
+    "T00000006_battery study 6",
+    "0.999"
+   ],
+   [
+    "T00000004",
+    "T00000004_battery study 4",
+    "T00000006",
+    "T00000006_battery study 6",
+    "0.9992"
+   ],
+   [
+    "T00000004",
+    "T00000004_battery study 4",
+    "T00000007",
+    "T00000007_battery study 7",
+    "0.9989"
+   ],
+   [
+    "T00000005",
+    "T00000005_battery study 5",
+    "T00000006",
+    "T00000006_battery study 6",
+    "0.9991"
+   ],
+   [
+    "T00000005",
+    "T00000005_battery study 5",
+    "T00000007",
+    "T00000007_battery study 7",
+    "0.9988"
+   ],
+   [
+    "T00000006",
+    "T00000006_battery study 6",
+    "T00000007",
+    "T00000007_battery study 7",
+    "0.9988"
+   ],
+   [
+    "T10000000",
+    "T10000000_genome study 0",
+    "T10000001",
+    "T10000001_genome study 1",
+    "0.9986"
+   ],
+   [
+    "T10000000",
+    "T10000000_genome study 0",
+    "T10000002",
+    "T10000002_genome study 2",
+    "0.9988"
+   ],
+   [
+    "T10000000",
+    "T10000000_genome study 0",
+    "T10000003",
+    "T10000003_genome study 3",
+    "0.9988"
+   ],
+   [
+    "T10000000",
+    "T10000000_genome study 0",
+    "T10000005",
+    "T10000005_genome study 5",
+    "0.9989"
+   ],
+   [
+    "T10000000",
+    "T10000000_genome study 0",
+    "T10000006",
+    "T10000006_genome study 6",
+    "0.9985"
+   ],
+   [
+    "T10000001",
+    "T10000001_genome study 1",
+    "T10000002",
+    "T10000002_genome study 2",
+    "0.9987"
+   ],
+   [
+    "T10000001",
+    "T10000001_genome study 1",
+    "T10000003",
+    "T10000003_genome study 3",
+    "0.9987"
+   ],
+   [
+    "T10000001",
+    "T10000001_genome study 1",
+    "T10000004",
+    "T10000004_genome study 4",
+    "0.9988"
+   ],
+   [
+    "T10000001",
+    "T10000001_genome study 1",
+    "T10000007",
+    "T10000007_genome study 7",
+    "0.9989"
+   ],
+   [
+    "T10000002",
+    "T10000002_genome study 2",
+    "T10000003",
+    "T10000003_genome study 3",
+    "0.9987"
+   ],
+   [
+    "T10000002",
+    "T10000002_genome study 2",
+    "T10000004",
+    "T10000004_genome study 4",
+    "0.9988"
+   ],
+   [
+    "T10000002",
+    "T10000002_genome study 2",
+    "T10000005",
+    "T10000005_genome study 5",
+    "0.999"
+   ],
+   [
+    "T10000003",
+    "T10000003_genome study 3",
+    "T10000005",
+    "T10000005_genome study 5",
+    "0.9992"
+   ],
+   [
+    "T10000003",
+    "T10000003_genome study 3",
+    "T10000006",
+    "T10000006_genome study 6",
+    "0.9989"
+   ],
+   [
+    "T10000004",
+    "T10000004_genome study 4",
+    "T10000005",
+    "T10000005_genome study 5",
+    "0.9991"
+   ],
+   [
+    "T10000004",
+    "T10000004_genome study 4",
+    "T10000006",
+    "T10000006_genome study 6",
+    "0.9988"
+   ],
+   [
+    "T10000004",
+    "T10000004_genome study 4",
+    "T10000007",
+    "T10000007_genome study 7",
+    "0.9993"
+   ],
+   [
+    "T10000005",
+    "T10000005_genome study 5",
+    "T10000006",
+    "T10000006_genome study 6",
+    "0.9988"
+   ],
+   [
+    "T10000006",
+    "T10000006_genome study 6",
+    "T10000007",
+    "T10000007_genome study 7",
+    "0.9988"
+   ],
+   [
+    "T20000000",
+    "T20000000_solar study 0",
+    "T20000002",
+    "T20000002_solar study 2",
+    "0.9999"
+   ],
+   [
+    "T20000000",
+    "T20000000_solar study 0",
+    "T20000003",
+    "T20000003_solar study 3",
+    "0.9999"
+   ],
+   [
+    "T20000000",
+    "T20000000_solar study 0",
+    "T20000004",
+    "T20000004_solar study 4",
+    "0.9999"
+   ],
+   [
+    "T20000000",
+    "T20000000_solar study 0",
+    "T20000006",
+    "T20000006_solar study 6",
+    "0.9999"
+   ],
+   [
+    "T20000001",
+    "T20000001_solar study 1",
+    "T20000002",
+    "T20000002_solar study 2",
+    "0.9999"
+   ],
+   [
+    "T20000001",
+    "T20000001_solar study 1",
+    "T20000003",
+    "T20000003_solar study 3",
+    "0.9999"
+   ],
+   [
+    "T20000001",
+    "T20000001_solar study 1",
+    "T20000004",
+    "T20000004_solar study 4",
+    "0.9999"
+   ],
+   [
+    "T20000001",
+    "T20000001_solar study 1",
+    "T20000006",
+    "T20000006_solar study 6",
+    "0.9999"
+   ],
+   [
+    "T20000002",
+    "T20000002_solar study 2",
+    "T20000003",
+    "T20000003_solar study 3",
+    "1.0"
+   ],
+   [
+    "T20000002",
+    "T20000002_solar study 2",
+    "T20000004",
+    "T20000004_solar study 4",
+    "1.0"
+   ],
+   [
+    "T20000002",
+    "T20000002_solar study 2",
+    "T20000005",
+    "T20000005_solar study 5",
+    "1.0"
+   ],
+   [
+    "T20000002",
+    "T20000002_solar study 2",
+    "T20000006",
+    "T20000006_solar study 6",
+    "1.0"
+   ],
+   [
+    "T20000002",
+    "T20000002_solar study 2",
+    "T20000007",
+    "T20000007_solar study 7",
+    "1.0"
+   ],
+   [
+    "T20000003",
+    "T20000003_solar study 3",
+    "T20000004",
+    "T20000004_solar study 4",
+    "1.0"
+   ],
+   [
+    "T20000003",
+    "T20000003_solar study 3",
+    "T20000005",
+    "T20000005_solar study 5",
+    "1.0"
+   ],
+   [
+    "T20000003",
+    "T20000003_solar study 3",
+    "T20000006",
+    "T20000006_solar study 6",
+    "1.0"
+   ],
+   [
+    "T20000003",
+    "T20000003_solar study 3",
+    "T20000007",
+    "T20000007_solar study 7",
+    "1.0"
+   ],
+   [
+    "T20000004",
+    "T20000004_solar study 4",
+    "T20000005",
+    "T20000005_solar study 5",
+    "1.0"
+   ],
+   [
+    "T20000004",
+    "T20000004_solar study 4",
+    "T20000006",
+    "T20000006_solar study 6",
+    "1.0"
+   ],
+   [
+    "T20000004",
+    "T20000004_solar study 4",
+    "T20000007",
+    "T20000007_solar study 7",
+    "1.0"
+   ],
+   [
+    "T20000005",
+    "T20000005_solar study 5",
+    "T20000006",
+    "T20000006_solar study 6",
+    "1.0"
+   ],
+   [
+    "T20000005",
+    "T20000005_solar study 5",
+    "T20000007",
+    "T20000007_solar study 7",
+    "1.0"
+   ],
+   [
+    "T20000006",
+    "T20000006_solar study 6",
+    "T20000007",
+    "T20000007_solar study 7",
+    "1.0"
+   ],
+   [
+    "T30000000",
+    "T30000000_bank study 0",
+    "T30000001",
+    "T30000001_bank study 1",
+    "1.0"
+   ],
+   [
+    "T30000000",
+    "T30000000_bank study 0",
+    "T30000003",
+    "T30000003_bank study 3",
+    "1.0"
+   ],
+   [
+    "T30000000",
+    "T30000000_bank study 0",
+    "T30000005",
+    "T30000005_bank study 5",
+    "1.0"
+   ],
+   [
+    "T30000000",
+    "T30000000_bank study 0",
+    "T30000007",
+    "T30000007_bank study 7",
+    "1.0"
+   ],
+   [
+    "T30000001",
+    "T30000001_bank study 1",
+    "T30000003",
+    "T30000003_bank study 3",
+    "1.0"
+   ],
+   [
+    "T30000001",
+    "T30000001_bank study 1",
+    "T30000005",
+    "T30000005_bank study 5",
+    "1.0"
+   ],
+   [
+    "T30000001",
+    "T30000001_bank study 1",
+    "T30000007",
+    "T30000007_bank study 7",
+    "1.0"
+   ],
+   [
+    "T30000002",
+    "T30000002_bank study 2",
+    "T30000003",
+    "T30000003_bank study 3",
+    "1.0"
+   ],
+   [
+    "T30000002",
+    "T30000002_bank study 2",
+    "T30000005",
+    "T30000005_bank study 5",
+    "1.0"
+   ],
+   [
+    "T30000002",
+    "T30000002_bank study 2",
+    "T30000007",
+    "T30000007_bank study 7",
+    "1.0"
+   ],
+   [
+    "T30000003",
+    "T30000003_bank study 3",
+    "T30000005",
+    "T30000005_bank study 5",
+    "1.0"
+   ],
+   [
+    "T30000003",
+    "T30000003_bank study 3",
+    "T30000007",
+    "T30000007_bank study 7",
+    "1.0"
+   ],
+   [
+    "T30000004",
+    "T30000004_bank study 4",
+    "T30000005",
+    "T30000005_bank study 5",
+    "1.0"
+   ],
+   [
+    "T30000004",
+    "T30000004_bank study 4",
+    "T30000007",
+    "T30000007_bank study 7",
+    "1.0"
+   ],
+   [
+    "T30000005",
+    "T30000005_bank study 5",
+    "T30000007",
+    "T30000007_bank study 7",
+    "1.0"
+   ],
+   [
+    "T30000006",
+    "T30000006_bank study 6",
+    "T30000007",
+    "T30000007_bank study 7",
+    "1.0"
+   ],
+   [
+    "T40000000",
+    "T40000000_ocean study 0",
+    "T40000002",
+    "T40000002_ocean study 2",
+    "1.0"
+   ],
+   [
+    "T40000000",
+    "T40000000_ocean study 0",
+    "T40000005",
+    "T40000005_ocean study 5",
+    "1.0"
+   ],
+   [
+    "T40000000",
+    "T40000000_ocean study 0",
+    "T40000006",
+    "T40000006_ocean study 6",
+    "1.0"
+   ],
+   [
+    "T40000000",
+    "T40000000_ocean study 0",
+    "T40000007",
+    "T40000007_ocean study 7",
+    "1.0"
+   ],
+   [
+    "T40000001",
+    "T40000001_ocean study 1",
+    "T40000002",
+    "T40000002_ocean study 2",
+    "1.0"
+   ],
+   [
+    "T40000001",
+    "T40000001_ocean study 1",
+    "T40000005",
+    "T40000005_ocean study 5",
+    "1.0"
+   ],
+   [
+    "T40000001",
+    "T40000001_ocean study 1",
+    "T40000006",
+    "T40000006_ocean study 6",
+    "1.0"
+   ],
+   [
+    "T40000001",
+    "T40000001_ocean study 1",
+    "T40000007",
+    "T40000007_ocean study 7",
+    "1.0"
+   ],
+   [
+    "T40000002",
+    "T40000002_ocean study 2",
+    "T40000005",
+    "T40000005_ocean study 5",
+    "1.0"
+   ],
+   [
+    "T40000002",
+    "T40000002_ocean study 2",
+    "T40000006",
+    "T40000006_ocean study 6",
+    "1.0"
+   ],
+   [
+    "T40000002",
+    "T40000002_ocean study 2",
+    "T40000007",
+    "T40000007_ocean study 7",
+    "1.0"
+   ],
+   [
+    "T40000003",
+    "T40000003_ocean study 3",
+    "T40000005",
+    "T40000005_ocean study 5",
+    "1.0"
+   ],
+   [
+    "T40000003",
+    "T40000003_ocean study 3",
+    "T40000006",
+    "T40000006_ocean study 6",
+    "1.0"
+   ],
+   [
+    "T40000003",
+    "T40000003_ocean study 3",
+    "T40000007",
+    "T40000007_ocean study 7",
+    "1.0"
+   ],
+   [
+    "T40000005",
+    "T40000005_ocean study 5",
+    "T40000006",
+    "T40000006_ocean study 6",
+    "1.0"
+   ],
+   [
+    "T40000005",
+    "T40000005_ocean study 5",
+    "T40000007",
+    "T40000007_ocean study 7",
+    "1.0"
+   ],
+   [
+    "T40000006",
+    "T40000006_ocean study 6",
+    "T40000007",
+    "T40000007_ocean study 7",
+    "1.0"
+   ]
+  ],
+  "report": "# Research corpus insights \u2014 TODAY\n\n- **47** converted documents \u2192 **41** unique texts; **6** (13%) are exact-content copies of another document.\n- Unique texts: **40 literature** (papers, books, reports, saved pages) and **1 your own output / machine backups** (before dedupe: 46 vs 1). Only literature is used for the tables below, except the write-vs-read section.\n- Claims indexed: 3 (2 market-size figures)\n\n## Where the corpus is thick (largest topic clusters)\n\n| # | Cluster (top terms) | Docs | Median year | % since 2023 |\n|---|---|---:|---:|---:|\n| 0 | plankton, upwelling, fisheries, tide, marine, sediment | 8 | 2019 | 12.5 |\n| 1 | panel, silicon, photovoltaic, module, wafer, irradiance | 8 | 2019 | 25.0 |\n| 2 | yield, monetary, credit, deposit, sovereign, inflation | 8 | 2018 | 12.5 |\n| 6 | allele, receptor, expression, pathway, sequence, protein | 5 | 2018 | 0.0 |\n| 5 | voltage, electrolyte, anode, cathode, lithium, charging | 4 | 2014 | 0.0 |\n| 3 | pathway, binding, genome, mutation, enzyme, sequence | 3 | 2018 | 33.3 |\n| 4 | cycle, storage, grid, lithium, anode, capacity | 3 | 2021 | 33.3 |\n| 7 | electrolyte, charging, capacity, voltage, storage, cathode | 1 | 2018 | 0.0 |\n\n## Gaps\n\n**Growing but thin** \u2014 mostly recent papers, few of them (candidates to add to):\n\n- none flagged\n\n**Substantial but stale** \u2014 median year \u2264 2018 (candidates for a refresh):\n\n- none flagged\n\n## What you write vs. what you read\n\n**You write about it, but the library is thin** (own output \u226b literature \u2014 claims resting on few sources):\n\n- none flagged\n\n**You collect it but haven't written on it** (literature-heavy, almost no own output \u2014 unmined reading):\n\n- none flagged\n\n## Cross-source links (memory \u2194 research)\n\n**Memory notes with the closest research evidence** (best-matching corpus document per note):\n\n- `project_battery_notes` \u2190 T00000005_battery study 5 (sim 0.79)\n\n**Large research clusters that no memory note touches** (unused evidence):\n\n- plankton, upwelling, fisheries, tide, marine, sediment \u2014 8 docs\n- panel, silicon, photovoltaic, module, wafer, irradiance \u2014 8 docs\n- yield, monetary, credit, deposit, sovereign, inflation \u2014 8 docs\n- allele, receptor, expression, pathway, sequence, protein \u2014 5 docs\n- pathway, binding, genome, mutation, enzyme, sequence \u2014 3 docs\n\n## Conflicting market-size claims\n\nSame market phrase, currency and target year, different documents, \u22652\u00d7 apart. Regex extraction \u2014 read the snippets before trusting a flag.\n\n- **design global panel market, 2024** \u2014 2 docs, USD 5.0bn \u2192 USD 20.0bn (4.0\u00d7)\n  - low: \u201cirradiance array tracker wafer analysis results method study report evidence sample outcome review model parameter design The global panel market was valued at USD 5 billion in 2024 and is expected to\u201d\n  - high: \u201cfer array photovoltaic analysis results method study report evidence sample outcome review model parameter design The global panel market is projected to reach USD 20 billion in 2024; CAGR of 7.5%. an\u201d\n\n## Near-duplicate pairs (97\u201399.5% similar: editions, preprints, revised versions)\n\n95 further pairs are \u226599.5% similar (same file saved under different names) and are omitted.\n\n- none\n",
+  "run_log": [
+   [
+    "47",
+    "41",
+    "full"
+   ]
+  ],
+  "stdout": "[1/6] catalog: 48 converted docs (personal excluded)\n      sensitive-content filter dropped 1 docs from all outputs\n[2/6] 41 unique texts (6 exact copies); 40 literature + 1 own substantive  (Ns)\n[3/6] 8 clusters (Ns)\n[4/6] 95 near-duplicate pairs (Ns)\n[5/6] claims: scanned 39 new texts -> 3 claims (Ns)\n[6/6] persisted (Ns)\nreports: ROOT/out/report_latest.md | ROOT/out/digest_TODAY.md\n"
+ },
+ "sklearn": "1.9.1"
+}
