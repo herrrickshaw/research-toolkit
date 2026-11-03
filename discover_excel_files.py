@@ -27,15 +27,17 @@ Usage:
 import argparse
 import hashlib
 import subprocess
+import os
 import sys
 from pathlib import Path
 
 import duckdb
 
-sys.path.insert(0, "/Users/umashankar/research-toolkit")
+REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, REPO_ROOT)
 from categorize import classify_folder, extract_topic, year_from_mtime_ms
 
-REPO_DIR = Path("/Users/umashankar/research-toolkit")
+REPO_DIR = Path(REPO_ROOT)
 DB_PATH = REPO_DIR / "document_catalog.duckdb"
 RCLONE_BIN = "/opt/homebrew/bin/rclone"
 EXTENSIONS = ("*.xlsx", "*.xls")

@@ -25,12 +25,13 @@ import os
 import sys
 import time
 
-sys.path.insert(0, "/Users/umashankar/research-toolkit")
+REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, REPO_ROOT)
 from zotero_crud import ZoteroCRUD, _request
 
 PAGE_SIZE = 100
-DEDUPE_LOG_FILE = os.environ.get("ZOTERO_DEDUPE_LOG", "/Users/umashankar/research-toolkit/zotero_dedupe_log.jsonl")
-LISTING_CHECKPOINT_FILE = os.environ.get("ZOTERO_DEDUPE_CHECKPOINT", "/Users/umashankar/research-toolkit/zotero_dedupe_listing_checkpoint.json")
+DEDUPE_LOG_FILE = os.environ.get("ZOTERO_DEDUPE_LOG", os.path.join(REPO_ROOT, "zotero_dedupe_log.jsonl"))
+LISTING_CHECKPOINT_FILE = os.environ.get("ZOTERO_DEDUPE_CHECKPOINT", os.path.join(REPO_ROOT, "zotero_dedupe_listing_checkpoint.json"))
 
 
 def log_action(rec):

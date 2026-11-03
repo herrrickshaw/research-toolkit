@@ -13,7 +13,7 @@ working even when the local desktop app is closed, busy, or (as happened
 once already) backlogged and unresponsive. Needs a real Web API key from
 https://www.zotero.org/settings/keys (Settings > Feeds/API > Create new
 private key, with library read/write) - set ZOTERO_API_KEY and
-ZOTERO_LIBRARY_PATH (e.g. "users/21600525", found in that same items JSON
+ZOTERO_LIBRARY_PATH (e.g. "users/<your-numeric-id>", found in that same items JSON
 under library.id, or in any zotero.org URL for your library).
 """
 import json
@@ -28,7 +28,7 @@ if MODE == "cloud":
     BASE = os.environ.get("ZOTERO_API_BASE", "https://api.zotero.org")
     LIBRARY_PATH = os.environ.get("ZOTERO_LIBRARY_PATH")
     if not LIBRARY_PATH:
-        raise RuntimeError("ZOTERO_MODE=cloud requires ZOTERO_LIBRARY_PATH, e.g. 'users/21600525'")
+        raise RuntimeError("ZOTERO_MODE=cloud requires ZOTERO_LIBRARY_PATH, e.g. 'users/<your-numeric-id>'")
 else:
     BASE = os.environ.get("ZOTERO_API_BASE", "http://127.0.0.1:23119/api")
     LIBRARY_PATH = "users/0"

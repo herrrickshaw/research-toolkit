@@ -25,11 +25,13 @@ Pure local transform over an already-built catalog - no network calls, no
 checkpointing needed (13k rows classifies in well under a second).
 """
 import re
+import os
 import sys
 
 import duckdb
 
-DB_PATH = "/Users/umashankar/research-toolkit/document_catalog.duckdb"
+REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(REPO_ROOT, "document_catalog.duckdb")
 
 
 def wb(*words):

@@ -19,12 +19,13 @@ import os
 import sys
 import time
 
-sys.path.insert(0, "/Users/umashankar/research-toolkit")
+REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, REPO_ROOT)
 from zotero_crud import ZoteroCRUD, _request
 
 PAGE_SIZE = 100
 TOPICS_PARENT_NAME = "Topics"
-ORGANIZE_LOG_FILE = os.environ.get("ZOTERO_ORGANIZE_LOG", "/Users/umashankar/research-toolkit/zotero_organize_log.jsonl")
+ORGANIZE_LOG_FILE = os.environ.get("ZOTERO_ORGANIZE_LOG", os.path.join(REPO_ROOT, "zotero_organize_log.jsonl"))
 
 
 def log_action(rec):
@@ -82,7 +83,7 @@ def get_or_create_collection(zc, name, parent_key, cache):
     raise RuntimeError(f"failed to create collection {name!r} after retries: {status} {body[:200]}")
 
 
-ITEMS_CHECKPOINT_FILE = "/Users/umashankar/research-toolkit/zotero_organize_listing_checkpoint.json"
+ITEMS_CHECKPOINT_FILE = os.path.join(REPO_ROOT, "zotero_organize_listing_checkpoint.json")
 
 
 def fetch_all_items(zc):

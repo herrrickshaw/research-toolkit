@@ -19,12 +19,13 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-sys.path.insert(0, "/Users/umashankar/research-toolkit")
+REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, REPO_ROOT)
 from categorize import build_tags
 from zotero_crud import ZoteroCRUD, _request
 
 PAGE_SIZE = 100
-LISTING_CHECKPOINT_FILE = "/Users/umashankar/research-toolkit/zotero_backfill_listing_checkpoint.json"
+LISTING_CHECKPOINT_FILE = os.path.join(REPO_ROOT, "zotero_backfill_listing_checkpoint.json")
 
 
 def source_from_url(url):

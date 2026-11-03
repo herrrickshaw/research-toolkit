@@ -4,9 +4,11 @@ a source: tag. Paginates the whole library and reports the exact gap count -
 this is the same cost as running the backfill itself, which is the point:
 a real measurement, not a copied number."""
 import json
+import os
 import sys
 
-sys.path.insert(0, "/Users/umashankar/research-toolkit")
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, REPO_ROOT)
 from zotero_crud import ZoteroCRUD, _request
 
 PAGE_SIZE = 100

@@ -30,8 +30,9 @@ import re
 import subprocess
 import sys
 
-DB_PATH = "/Users/umashankar/research-toolkit/document_catalog.duckdb"
-COPY_LOG_FILE = "/Users/umashankar/research-toolkit/cloud_copy_log.jsonl"
+REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(REPO_ROOT, "document_catalog.duckdb")
+COPY_LOG_FILE = os.path.join(REPO_ROOT, "cloud_copy_log.jsonl")
 
 REMOTE_MAP = {
     "dropbox": "dropbox:",

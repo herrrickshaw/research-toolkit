@@ -7,9 +7,11 @@ laptop_backup, Desktop (Selective Sync Conflict), root zip/) - so if dedupe
 ran correctly, that group must have exactly one canonical (has-duplicates:N)
 and the rest tagged status:duplicate."""
 import json
+import os
 import sys
 
-sys.path.insert(0, "/Users/umashankar/research-toolkit")
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, REPO_ROOT)
 from zotero_crud import ZoteroCRUD, _request
 
 

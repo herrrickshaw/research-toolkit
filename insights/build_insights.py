@@ -25,10 +25,11 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import normalize
 
 HOME = Path.home()
-TOOLKIT = HOME / "research-toolkit"
+TOOLKIT = Path(__file__).resolve().parent.parent
 OUT = TOOLKIT / "insights"
 CATALOG = TOOLKIT / "document_catalog.duckdb"
-MEMORY_DIR = HOME / ".claude/projects/-Users-umashankar/memory"
+# Claude Code names a project dir after its path, e.g. /home/me -> "-home-me".
+MEMORY_DIR = HOME / ".claude/projects" / ("-" + str(HOME).strip("/").replace("/", "-")) / "memory"
 DB = OUT / "research_insights.duckdb"
 
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS

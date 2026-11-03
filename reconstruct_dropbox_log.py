@@ -21,11 +21,12 @@ import os
 import sys
 import time
 
-sys.path.insert(0, "/Users/umashankar/research-toolkit")
+REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, REPO_ROOT)
 from zotero_crud import ZoteroCRUD, _request
 
-OUT_LOG = "/Users/umashankar/research-toolkit/zotero_import_log.jsonl"
-CHECKPOINT_FILE = "/Users/umashankar/research-toolkit/zotero_reconstruct_checkpoint.json"
+OUT_LOG = os.path.join(REPO_ROOT, "zotero_import_log.jsonl")
+CHECKPOINT_FILE = os.path.join(REPO_ROOT, "zotero_reconstruct_checkpoint.json")
 PAGE_SIZE = 100
 
 
