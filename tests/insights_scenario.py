@@ -89,7 +89,7 @@ def run_scenario(mod, root: Path, argv=("build_insights.py",), capsys=None) -> d
     today = str(mod.date.today())
     norm = lambda s: s.replace(today, "TODAY").replace(str(root), "ROOT")  # noqa: E731
     stdout = norm(re.sub(r"\(\d+s\)", "(Ns)", capsys.readouterr().out)) if capsys else ""
-    db = duckdb.connect(str(mod.DB if not old[1:] and "--limit" not in argv else out / "smoke.duckdb"), read_only=True)
+    db = duckdb.connect(str(out / ("smoke.duckdb" if "--limit" in argv else "research_insights.duckdb")), read_only=True)
     q = lambda s: [[str(c) for c in r] for r in db.execute(s).fetchall()]  # noqa: E731
     res = {
         "stdout": stdout,
