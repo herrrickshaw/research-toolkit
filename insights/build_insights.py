@@ -163,28 +163,28 @@ def memory_notes():
 
 
 # --- main -------------------------------------------------------------------
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--limit", type=int, default=0)
-    args = ap.parse_args()
-    t0 = time.time()
-    OUT.mkdir(exist_ok=True)
-    db = duckdb.connect(str(OUT / "smoke.duckdb") if args.limit else str(DB))
-    db.execute("""create table if not exists docs(item_key varchar primary key, title varchar,
+SCHEMA = (
+    """create table if not exists docs(item_key varchar primary key, title varchar,
         category varchar, topic varchar, year integer, chars bigint, text_hash varchar,
-        cluster integer, is_canonical boolean, first_seen date, converted_at timestamp, kind varchar, shareable boolean)""")
-    db.execute("""create table if not exists claims(item_key varchar, text_hash varchar, kind varchar,
-        subject varchar, currency varchar, value double, year integer, snippet varchar)""")
-    db.execute("create table if not exists claims_done(text_hash varchar primary key)")
-    db.execute("create table if not exists run_log(run_at timestamp, docs integer, unique_docs integer, note varchar)")
-    prev = {r[0]: r[1] for r in db.execute("select item_key, first_seen from docs").fetchall()}
-    first_run = not prev
-    today = date.today()
+        cluster integer, is_canonical boolean, first_seen date, converted_at timestamp, kind varchar, shareable boolean)""",
+    """create table if not exists claims(item_key varchar, text_hash varchar, kind varchar,
+        subject varchar, currency varchar, value double, year integer, snippet varchar)""",
+    "create table if not exists claims_done(text_hash varchar primary key)",
+    "create table if not exists run_log(run_at timestamp, docs integer, unique_docs integer, note varchar)",
+)
 
-    docs = load_catalog(args.limit)
-    print(f"[1/6] catalog: {len(docs)} converted docs (personal excluded)", flush=True)
 
-    # exact-duplicate detection + heads
+def open_db(limit):
+    """Open (and initialise) the insights DuckDB; --limit runs use a throwaway smoke DB."""
+    OUT.mkdir(exist_ok=True)
+    db = duckdb.connect(str(OUT / "smoke.duckdb") if limit else str(DB))
+    for ddl in SCHEMA:
+        db.execute(ddl)
+    return db
+
+
+def hash_docs(docs, prev, today):
+    """Fill text_hash / year / first_seen on each doc; return (docs grouped by text hash, head text by item_key)."""
     by_hash, heads = defaultdict(list), {}
     for d in docs:
         txt = read_text(d["md_path"], HASH_CHARS)
@@ -198,13 +198,22 @@ def main():
     for d in docs:  # own-project markers in the text reclassify saved pages/reports as own output
         if d["kind"] == "literature" and OWN_TEXT.search(heads[d["item_key"]][:2500]):
             d["kind"] = "own"
+    return by_hash, heads
+
+
+def drop_sensitive(docs, by_hash, heads):
+    """Remove sensitive documents from every structure; return (docs, by_hash, number dropped)."""
     sens = {d["item_key"] for d in docs if SENSITIVE_DOC.search(d["title"] + " " + heads[d["item_key"]][:3000])
             or SENSITIVE_TITLE.search(d["title"])
             or (d["kind"] == "literature" and NAME_DOC.search(d["title"] + " " + heads[d["item_key"]][:3000]))}
     docs = [d for d in docs if d["item_key"] not in sens]
     by_hash = {h: [d for d in g if d["item_key"] not in sens] for h, g in by_hash.items()}
     by_hash = {h: g for h, g in by_hash.items() if g}
-    print(f"      sensitive-content filter dropped {len(sens)} docs from all outputs", flush=True)
+    return docs, by_hash, len(sens)
+
+
+def pick_canonical(by_hash, heads):
+    """Mark one canonical doc per unique text; return (literature canon, own canon)."""
     canon = []
     for h, grp in by_hash.items():
         grp.sort(key=lambda d: (d["kind"] == "own", d["category"] == "backup", -(d["chars"] or 0), d["item_key"]))
@@ -215,11 +224,13 @@ def main():
     # blank/near-empty extractions all hash alike; keep them out of clustering
     canon = [d for d in canon if len(heads[d["item_key"]]) >= 400]
     canon_own = [d for d in canon if d["kind"] == "own"]
-    canon = [d for d in canon if d["kind"] == "literature"]
-    print(f"[2/6] {len(by_hash)} unique texts ({len(docs) - len(by_hash)} exact copies); "
-          f"{len(canon)} literature + {len(canon_own)} own substantive  ({time.time()-t0:.0f}s)", flush=True)
+    return [d for d in canon if d["kind"] == "literature"], canon_own
 
-    # topic clusters
+
+def cluster_topics(canon, canon_own, heads):
+    """TF-IDF + SVD + KMeans over literature heads; assign own docs to the same clusters.
+
+    Returns (vectorizer, X, Z, labels, own_labels, k, cluster_rows)."""
     vec = TfidfVectorizer(max_features=60000, min_df=5, max_df=0.35, stop_words=WEB_STOP,
                           token_pattern=r"(?u)\b[a-zA-Z][a-zA-Z]{2,}\b", sublinear_tf=True, ngram_range=(1, 2), dtype=np.float32)
     X = vec.fit_transform([heads[d["item_key"]] for d in canon])
@@ -245,30 +256,36 @@ def main():
                                  median_year=int(np.median(yrs)) if yrs else None,
                                  pct_recent=round(100 * sum(y >= RECENT_YEAR for y in yrs) / len(yrs), 1) if yrs else None,
                                  with_year=len(yrs), n_own=int(own_count[c])))
-    cl_of = {canon[i]["item_key"]: int(labels[i]) for i in range(len(canon))}
+    return vec, X, Z, labels, own_labels, k, cluster_rows
+
+
+def assign_clusters(docs, canon, canon_own, labels, own_labels):
+    """Write each doc's cluster, looked up by its text hash."""
     hash_cluster = {canon[i]["text_hash"]: int(labels[i]) for i in range(len(canon))}
     hash_cluster.update({canon_own[i]["text_hash"]: int(own_labels[i]) for i in range(len(canon_own))})
     for d in docs:
         d["cluster"] = hash_cluster.get(d["text_hash"])
-    print(f"[3/6] {k} clusters ({time.time()-t0:.0f}s)", flush=True)
 
-    def shareable(d):  # may this doc's title appear in a report / the uploaded DB?
-        return d["category"] == "research" and d["folder"] not in PRIVATE_FOLDERS
 
-    for d in docs:
-        d["shareable"] = shareable(d)
+def is_shareable(d):
+    """May this doc's title appear in a report / the uploaded DB?"""
+    return d["category"] == "research" and d["folder"] not in PRIVATE_FOLDERS
 
-    # near-duplicates (different text, same content family: editions, preprints)
+
+def find_near_dups(canon, Z):
+    """Pairs of different texts in the same content family (editions, preprints)."""
     nn = NearestNeighbors(n_neighbors=min(6, len(canon)), metric="cosine", algorithm="brute").fit(Z)
     dist, ind = nn.kneighbors(Z)
     near = []
     for i in range(len(canon)):
         for dj, j in zip(dist[i][1:], ind[i][1:]):
-            if j > i and 1 - dj >= NEAR_DUP_SIM and shareable(canon[i]) and shareable(canon[j]):
+            if j > i and 1 - dj >= NEAR_DUP_SIM and is_shareable(canon[i]) and is_shareable(canon[j]):
                 near.append((canon[i]["item_key"], canon[i]["title"], canon[j]["item_key"], canon[j]["title"], round(1 - float(dj), 4)))
-    print(f"[4/6] {len(near)} near-duplicate pairs ({time.time()-t0:.0f}s)", flush=True)
+    return near
 
-    # claims: only for unique texts we have not scanned before
+
+def extract_new_claims(db, by_hash):
+    """Claims only for unique texts not scanned before; return (claim rows, done-hash rows)."""
     done = {r[0] for r in db.execute("select text_hash from claims_done").fetchall()}
     new_claims, new_done = [], []
     for h, grp in by_hash.items():
@@ -281,9 +298,11 @@ def main():
             new_claims.append((d["item_key"], h, cl["kind"], cl["subject"], cl["currency"],
                                cl["value"], cl["year"], cl["snippet"]))
         new_done.append((h,))
-    print(f"[5/6] claims: scanned {len(new_done)} new texts -> {len(new_claims)} claims ({time.time()-t0:.0f}s)", flush=True)
+    return new_claims, new_done
 
-    # cross-source links: memory decisions <-> research clusters/docs
+
+def link_memory(vec, X, canon, labels):
+    """Cross-source links: memory decisions <-> research docs (top 5 shareable per note)."""
     notes = memory_notes()
     links = []
     if notes:
@@ -291,21 +310,23 @@ def main():
         sims = (M @ X.T).toarray() if X.shape[0] * len(notes) < 5e7 else None
         for ni, n in enumerate(notes):
             row = sims[ni] if sims is not None else (M[ni] @ X.T).toarray().ravel()
-            for j in [j for j in np.argsort(row)[::-1][:40] if shareable(canon[j])][:5]:
+            for j in [j for j in np.argsort(row)[::-1][:40] if is_shareable(canon[j])][:5]:
                 links.append((n["name"], n["description"], canon[j]["item_key"], canon[j]["title"],
                               int(labels[j]), round(float(row[j]), 4)))
+    return links
 
-    # persist
+
+def persist(db, docs, cluster_rows, near, links, new_claims, new_done):
+    """Write all derived tables in one transaction."""
     db.execute("begin")
     db.execute("delete from docs")
     db.executemany("insert into docs values (?,?,?,?,?,?,?,?,?,?,?,?,?)",
                    [(d["item_key"], d["title"] if d["shareable"] else None, d["category"], d["topic"], d["year"], d["chars"], d["text_hash"],
                      d["cluster"], d["is_canonical"], d["first_seen"], d["converted_at"], d["kind"], d["shareable"]) for d in docs])
-    for t, rows in (("clusters", cluster_rows),):
-        db.execute(f"drop table if exists {t}")
-        db.execute("create table clusters(cluster int, label varchar, n_docs int, median_year int, pct_recent double, with_year int, n_own int)")
-        db.executemany("insert into clusters values (?,?,?,?,?,?,?)",
-                       [(r["cluster"], r["label"], r["n_docs"], r["median_year"], r["pct_recent"], r["with_year"], r["n_own"]) for r in rows])
+    db.execute("drop table if exists clusters")
+    db.execute("create table clusters(cluster int, label varchar, n_docs int, median_year int, pct_recent double, with_year int, n_own int)")
+    db.executemany("insert into clusters values (?,?,?,?,?,?,?)",
+                   [(r["cluster"], r["label"], r["n_docs"], r["median_year"], r["pct_recent"], r["with_year"], r["n_own"]) for r in cluster_rows])
     db.execute("drop table if exists near_dups")
     db.execute("create table near_dups(a_key varchar, a_title varchar, b_key varchar, b_title varchar, similarity double)")
     db.executemany("insert into near_dups values (?,?,?,?,?)", near)
@@ -318,7 +339,9 @@ def main():
         db.executemany("insert or ignore into claims_done values (?)", new_done)
     db.execute("commit")
 
-    # contradictions: same subject+currency+year, unique texts disagree >=2x
+
+def build_contradictions(db):
+    """Same subject+currency+year, unique texts disagree >=2x (and <=15x)."""
     db.execute("drop table if exists contradictions")
     db.execute("""create table contradictions as
       with m as (select subject, currency, year, text_hash, any_value(item_key) item_key,
@@ -331,6 +354,44 @@ def main():
       from m where subject not in (select unnest(?::varchar[]))
       group by 1,2,3 having count(*) >= 2 and max(v)/min(v) >= 2 and max(v)/min(v) <= 15
       order by n_docs desc, ratio desc""", [sorted(GENERIC_SUBJ)])
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--limit", type=int, default=0)
+    args = ap.parse_args()
+    t0 = time.time()
+    db = open_db(args.limit)
+    prev = {r[0]: r[1] for r in db.execute("select item_key, first_seen from docs").fetchall()}
+    first_run = not prev
+    today = date.today()
+
+    docs = load_catalog(args.limit)
+    print(f"[1/6] catalog: {len(docs)} converted docs (personal excluded)", flush=True)
+
+    by_hash, heads = hash_docs(docs, prev, today)
+    docs, by_hash, n_sens = drop_sensitive(docs, by_hash, heads)
+    print(f"      sensitive-content filter dropped {n_sens} docs from all outputs", flush=True)
+    canon, canon_own = pick_canonical(by_hash, heads)
+    print(f"[2/6] {len(by_hash)} unique texts ({len(docs) - len(by_hash)} exact copies); "
+          f"{len(canon)} literature + {len(canon_own)} own substantive  ({time.time()-t0:.0f}s)", flush=True)
+
+    vec, X, Z, labels, own_labels, k, cluster_rows = cluster_topics(canon, canon_own, heads)
+    assign_clusters(docs, canon, canon_own, labels, own_labels)
+    print(f"[3/6] {k} clusters ({time.time()-t0:.0f}s)", flush=True)
+
+    for d in docs:
+        d["shareable"] = is_shareable(d)
+
+    near = find_near_dups(canon, Z)
+    print(f"[4/6] {len(near)} near-duplicate pairs ({time.time()-t0:.0f}s)", flush=True)
+
+    new_claims, new_done = extract_new_claims(db, by_hash)
+    print(f"[5/6] claims: scanned {len(new_done)} new texts -> {len(new_claims)} claims ({time.time()-t0:.0f}s)", flush=True)
+
+    links = link_memory(vec, X, canon, labels)
+    persist(db, docs, cluster_rows, near, links, new_claims, new_done)
+    build_contradictions(db)
     db.execute("insert into run_log values (?,?,?,?)",
                [datetime.now(), len(docs), len(by_hash), "smoke" if args.limit else "full"])
     print(f"[6/6] persisted ({time.time()-t0:.0f}s)", flush=True)

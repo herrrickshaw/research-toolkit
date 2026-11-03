@@ -1,0 +1,16 @@
+[project]
+name = "research-toolkit"
+version = "0.1.0"
+description = "Resumable pipeline for cataloguing, extracting and searching a large unsorted document pile"
+requires-python = ">=3.9"
+
+[tool.ruff]
+line-length = 140
+target-version = "py39"
+extend-exclude = [".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

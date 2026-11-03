@@ -234,6 +234,107 @@ def checkpoint(remote, folder, source, found, archives, skipped):
         }) + "\n")
 
 
+def scan_root_files(remote, source, all_found, all_archives):
+    """Root-level loose files (not in any folder): non-recursive, cheap regardless of account size.
+    Returns (found, archives) for the checkpoint record."""
+    found, archives = [], []
+    try:
+        result = subprocess.run(
+            [RCLONE_BIN, "lsf", remote, "--files-only", "--format", "pst", "--separator", "\t"],
+            capture_output=True, text=True, timeout=60,
+        )
+        if result.returncode == 0:
+            for line in result.stdout.splitlines():
+                parts = line.split("\t")
+                if len(parts) == 3:
+                    path, size_str, mtime_str = parts
+                    ext = Path(path).suffix.lstrip(".").lower()
+                    if ext in DOCUMENT_EXTENSIONS:
+                        found.append((path, size_str, mtime_str))
+                        all_found.append((source, path, size_str, mtime_str))
+                    elif ext in ARCHIVE_EXTENSIONS:
+                        archives.append({"path": path})
+                        all_archives.append({"source": source, "path": path})
+    except subprocess.TimeoutExpired:
+        pass
+    return found, archives
+
+
+def sweep_remote(remote, done_units, args, all_found, all_archives, all_skipped):
+    """Sweep one rclone remote: root files, then each non-skipped top-level folder, checkpointing each unit."""
+    source = "dropbox" if remote == "dropbox:" else "googledrive"
+    log(f"=== sweeping {remote} ===")
+    top_folders = rclone_lsd(remote, timeout=60) or []
+    log(f"{len(top_folders)} top-level folder(s) on {remote}")
+
+    # Root-level loose files first. Checkpointed as folder "".
+    if (remote, "") not in done_units:
+        found, archives = scan_root_files(remote, source, all_found, all_archives)
+        checkpoint(remote, "", source, found, archives, [])
+
+    for folder in top_folders:
+        if remote == "dropbox:" and folder.lower() in ALREADY_COVERED_TOP_FOLDERS:
+            continue
+        if folder.lower() in PATHOLOGICAL_SKIP_FOLDERS:
+            log(f"skip {remote}{folder} (pathologically slow — Zotero's own per-item storage mirror)")
+            checkpoint(remote, folder, source, [], [], [{"path": f"{remote}{folder}", "reason": "pathological_skip"}])
+            continue
+        if (remote, folder) in done_units:
+            continue
+        found, archives, skipped = [], [], []
+        walk(remote, folder, 0, args.max_depth, args.per_call_timeout, found, archives, skipped)
+        for path, size_str, mtime_str in found:
+            all_found.append((source, path, size_str, mtime_str))
+        for a in archives:
+            a["source"] = source
+            all_archives.append(a)
+        all_skipped.extend(skipped)
+        checkpoint(remote, folder, source, found, archives, skipped)
+
+
+def write_scan_logs(all_archives, all_skipped):
+    """Persist the archive inventory and the skipped-folder list (overwritten each run)."""
+    with open(ARCHIVES_LOG, "w") as f:
+        for a in all_archives:
+            f.write(json.dumps(a) + "\n")
+    with open(SKIPPED_LOG, "w") as f:
+        for s in all_skipped:
+            f.write(json.dumps(s) + "\n")
+
+
+def prepare_rows(new_rows):
+    """Turn newly found (source, path, size, mtime) tuples into `documents` insert tuples plus summary counts."""
+    by_category, by_filetype = {}, {}
+    prepared = []
+    for source, path, _size_str, mtime_str in new_rows:
+        item_key = item_key_for(source, path)
+        title = Path(path).name
+        filetype = Path(path).suffix.lstrip(".").lower() or "unknown"
+        topic, top_folder = extract_topic(path)
+        category = classify_folder(top_folder)
+        mtime_ms = mtime_ms_from_rclone(mtime_str)
+        year = year_from_mtime_ms(mtime_ms)
+        by_category[category] = by_category.get(category, 0) + 1
+        by_filetype[filetype] = by_filetype.get(filetype, 0) + 1
+        prepared.append((item_key, title, path, source, category, topic, filetype,
+                          str(year) if year else None, None, False, None, mtime_ms))
+    return prepared, by_category, by_filetype
+
+
+def insert_rows(con, prepared):
+    """Insert prepared rows (conflicts on item_key are ignored); return (count before, count after)."""
+    before = con.execute("select count(*) from documents").fetchone()[0]
+    con.executemany("""
+        insert into documents
+            (item_key, title, path, source, category, topic, filetype, year,
+             md5, is_duplicate, duplicate_of, mtime, date_added, auto_topic)
+        values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, current_timestamp, NULL)
+        on conflict (item_key) do nothing
+    """, prepared)
+    after = con.execute("select count(*) from documents").fetchone()[0]
+    return before, after
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--dry-run", action="store_true")
@@ -250,65 +351,12 @@ def main():
             f"{len(all_found)} document(s)/{len(all_archives)} archive(s) carried forward")
 
     for remote in REMOTES:
-        source = "dropbox" if remote == "dropbox:" else "googledrive"
-        log(f"=== sweeping {remote} ===")
-        top_folders = rclone_lsd(remote, timeout=60) or []
-        log(f"{len(top_folders)} top-level folder(s) on {remote}")
-
-        # Root-level loose files first (not in any folder) — non-recursive,
-        # cheap regardless of account size. Checkpointed as folder "".
-        if (remote, "") not in done_units:
-            found, archives = [], []
-            try:
-                result = subprocess.run(
-                    [RCLONE_BIN, "lsf", remote, "--files-only", "--format", "pst", "--separator", "\t"],
-                    capture_output=True, text=True, timeout=60,
-                )
-                if result.returncode == 0:
-                    for line in result.stdout.splitlines():
-                        parts = line.split("\t")
-                        if len(parts) == 3:
-                            path, size_str, mtime_str = parts
-                            ext = Path(path).suffix.lstrip(".").lower()
-                            if ext in DOCUMENT_EXTENSIONS:
-                                found.append((path, size_str, mtime_str))
-                                all_found.append((source, path, size_str, mtime_str))
-                            elif ext in ARCHIVE_EXTENSIONS:
-                                archives.append({"path": path})
-                                all_archives.append({"source": source, "path": path})
-            except subprocess.TimeoutExpired:
-                pass
-            checkpoint(remote, "", source, found, archives, [])
-
-        for folder in top_folders:
-            if remote == "dropbox:" and folder.lower() in ALREADY_COVERED_TOP_FOLDERS:
-                continue
-            if folder.lower() in PATHOLOGICAL_SKIP_FOLDERS:
-                log(f"skip {remote}{folder} (pathologically slow — Zotero's own per-item storage mirror)")
-                checkpoint(remote, folder, source, [], [], [{"path": f"{remote}{folder}", "reason": "pathological_skip"}])
-                continue
-            if (remote, folder) in done_units:
-                continue
-            found, archives, skipped = [], [], []
-            walk(remote, folder, 0, args.max_depth, args.per_call_timeout, found, archives, skipped)
-            for path, size_str, mtime_str in found:
-                all_found.append((source, path, size_str, mtime_str))
-            for a in archives:
-                a["source"] = source
-                all_archives.append(a)
-            all_skipped.extend(skipped)
-            checkpoint(remote, folder, source, found, archives, skipped)
+        sweep_remote(remote, done_units, args, all_found, all_archives, all_skipped)
 
     log(f"\nscan complete: {len(all_found)} document file(s) found across both remotes, "
         f"{len(all_archives)} archive file(s), {len(all_skipped)} folder(s) skipped (too big even "
         f"after subdivision).")
-
-    with open(ARCHIVES_LOG, "w") as f:
-        for a in all_archives:
-            f.write(json.dumps(a) + "\n")
-    with open(SKIPPED_LOG, "w") as f:
-        for s in all_skipped:
-            f.write(json.dumps(s) + "\n")
+    write_scan_logs(all_archives, all_skipped)
 
     # Only now do we need the database — connect (retrying through any
     # in-progress pdf_to_markdown.py batch) to filter out what's already
@@ -325,21 +373,7 @@ def main():
         con.close()
         return
 
-    by_category, by_filetype = {}, {}
-    prepared = []
-    for source, path, size_str, mtime_str in new_rows:
-        item_key = item_key_for(source, path)
-        title = Path(path).name
-        filetype = Path(path).suffix.lstrip(".").lower() or "unknown"
-        topic, top_folder = extract_topic(path)
-        category = classify_folder(top_folder)
-        mtime_ms = mtime_ms_from_rclone(mtime_str)
-        year = year_from_mtime_ms(mtime_ms)
-        by_category[category] = by_category.get(category, 0) + 1
-        by_filetype[filetype] = by_filetype.get(filetype, 0) + 1
-        prepared.append((item_key, title, path, source, category, topic, filetype,
-                          str(year) if year else None, None, False, None, mtime_ms))
-
+    prepared, by_category, by_filetype = prepare_rows(new_rows)
     log(f"by category: {by_category}")
     log(f"by filetype: {by_filetype}")
 
@@ -348,15 +382,7 @@ def main():
         con.close()
         return
 
-    before = con.execute("select count(*) from documents").fetchone()[0]
-    con.executemany("""
-        insert into documents
-            (item_key, title, path, source, category, topic, filetype, year,
-             md5, is_duplicate, duplicate_of, mtime, date_added, auto_topic)
-        values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, current_timestamp, NULL)
-        on conflict (item_key) do nothing
-    """, prepared)
-    after = con.execute("select count(*) from documents").fetchone()[0]
+    before, after = insert_rows(con, prepared)
     con.close()
     log(f"✓ inserted {after - before} new row(s) into documents ({before} -> {after}).")
 

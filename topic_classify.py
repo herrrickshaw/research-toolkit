@@ -24,15 +24,18 @@ column, so it's safe to rerun after adding categories or after new imports.
 Pure local transform over an already-built catalog - no network calls, no
 checkpointing needed (13k rows classifies in well under a second).
 """
+from __future__ import annotations
+
+import os
 import re
 import sys
 
 import duckdb
 
-DB_PATH = "/Users/umashankar/research-toolkit/document_catalog.duckdb"
+DB_PATH = os.environ.get("TOPIC_CLASSIFY_DB", "/Users/umashankar/research-toolkit/document_catalog.duckdb")
 
 
-def wb(*words):
+def wb(*words: str) -> list[str]:
     """Word-boundary regex for each phrase; spaces/hyphens/underscores are
     interchangeable so "object oriented", "object-oriented" and
     "object_oriented" all match one pattern."""
@@ -135,37 +138,36 @@ CATEGORIES = [
 
 UNCLASSIFIED = "Other / Unclassified"
 
+# Compiled once; same order and semantics as CATEGORIES.
+_COMPILED = [(name, [re.compile(p) for p in patterns]) for name, patterns in CATEGORIES]
 
-def classify(title):
+
+def classify(title: str | None) -> str:
+    """First matching subject category for a title, else UNCLASSIFIED."""
     t = (title or "").lower()
-    for name, patterns in CATEGORIES:
-        for pattern in patterns:
-            if re.search(pattern, t):
-                return name
+    for name, patterns in _COMPILED:
+        if any(p.search(t) for p in patterns):
+            return name
     return UNCLASSIFIED
 
 
-def main():
-    report_only = "--report" in sys.argv
-
-    con = duckdb.connect(DB_PATH, read_only=report_only)
-    rows = con.execute("SELECT item_key, title FROM documents").fetchall()
-
-    classified = [(classify(title), item_key) for item_key, title in rows]
-
-    counts = {}
-    for topic, _ in classified:
+def count_topics(topics) -> dict:
+    """Occurrences per topic label, in first-seen order."""
+    counts: dict = {}
+    for topic in topics:
         counts[topic] = counts.get(topic, 0) + 1
-    total = len(classified)
+    return counts
+
+
+def print_report(counts: dict, total: int) -> None:
+    """One line per topic, most frequent first."""
     print(f"{total} documents classified\n")
     for topic, n in sorted(counts.items(), key=lambda kv: -kv[1]):
         print(f"{n:6d} ({100 * n / total:5.1f}%)  {topic}")
 
-    if report_only:
-        print("\n(--report: DB not modified)")
-        con.close()
-        return
 
+def write_auto_topics(con, classified: list) -> None:
+    """Overwrite documents.auto_topic from [(topic, item_key), ...] (idempotent)."""
     con.execute("ALTER TABLE documents ADD COLUMN IF NOT EXISTS auto_topic VARCHAR")
     con.execute("CREATE OR REPLACE TEMP TABLE _auto_topic (item_key VARCHAR, auto_topic VARCHAR)")
     con.executemany("INSERT INTO _auto_topic VALUES (?, ?)", [(k, t) for t, k in classified])
@@ -177,7 +179,27 @@ def main():
     """)
     con.execute("DROP TABLE _auto_topic")
 
-    print(f"\n=== auto_topic column written for {total} rows in {DB_PATH} ===")
+
+def main(argv: list | None = None, db_path: str | None = None) -> None:
+    """CLI: classify every catalog title; `--report` prints counts without writing."""
+    argv = sys.argv[1:] if argv is None else argv
+    db_path = db_path or DB_PATH
+    report_only = "--report" in argv
+
+    con = duckdb.connect(db_path, read_only=report_only)
+    rows = con.execute("SELECT item_key, title FROM documents").fetchall()
+
+    classified = [(classify(title), item_key) for item_key, title in rows]
+    total = len(classified)
+    print_report(count_topics(topic for topic, _ in classified), total)
+
+    if report_only:
+        print("\n(--report: DB not modified)")
+        con.close()
+        return
+
+    write_auto_topics(con, classified)
+    print(f"\n=== auto_topic column written for {total} rows in {db_path} ===")
     con.close()
 
 

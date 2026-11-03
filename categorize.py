@@ -7,8 +7,11 @@ Used both at item-creation time (zotero_dropbox_import.save_to_zotero) and
 by the one-time backfill pass (backfill_tags.py) for items created before
 this existed.
 """
+from __future__ import annotations
+
 import datetime
 import os
+from typing import Optional
 
 PERSONAL_KEYWORDS = [
     "personal", "tax", "itr", "pay slip", "payslip", "pay-slip",
@@ -40,7 +43,16 @@ GENERIC_BUCKETS = {
 }
 
 
-def classify_folder(top_folder):
+# Folders whose name carries no topical signal at all.
+UNCATEGORIZED_FOLDERS = frozenset({
+    "documents", "all unorganised files", "downloads", "files", "docs",
+    "saved from web", "saved from chrome", "attachments", "sent files",
+    "new folder", "type", "",
+})
+
+
+def classify_folder(top_folder: Optional[str]) -> str:
+    """Folder name -> "personal" | "backup" | "uncategorized" | "research" (keyword heuristic)."""
     name = (top_folder or "").lower()
     if not name:
         return "uncategorized"
@@ -48,14 +60,12 @@ def classify_folder(top_folder):
         return "personal"
     if any(k in name for k in BACKUP_KEYWORDS):
         return "backup"
-    if name in {"documents", "all unorganised files", "downloads", "files",
-                "docs", "saved from web", "saved from chrome", "attachments",
-                "sent files", "new folder", "type", ""}:
+    if name in UNCATEGORIZED_FOLDERS:
         return "uncategorized"
     return "research"
 
 
-def extract_topic(path):
+def extract_topic(path: str) -> tuple[str, str]:
     """path is a dropbox_path like 'folder/sub/file.ext' or, for
     archive-extracted files, 'folder/sub/archive.zip!internal/file.ext'.
     Uses the top-level folder as the topic, except for generic catch-all
@@ -73,16 +83,18 @@ def extract_topic(path):
     return top, top
 
 
-def year_from_mtime_ms(mtime_ms):
+def year_from_mtime_ms(mtime_ms: Optional[float]) -> Optional[int]:
+    """UTC year of a millisecond epoch timestamp; None if missing or out of range."""
     if not mtime_ms:
         return None
     try:
-        return datetime.datetime.utcfromtimestamp(mtime_ms / 1000).year
+        return datetime.datetime.fromtimestamp(mtime_ms / 1000, tz=datetime.timezone.utc).year
     except (ValueError, OSError, OverflowError):
         return None
 
 
-def build_tags(path, mtime_ms, source):
+def build_tags(path: str, mtime_ms: Optional[float], source: str) -> list[dict]:
+    """Zotero tag dicts (category/topic/source/filetype[/year]) derived from a remote path."""
     topic, top_folder = extract_topic(path)
     category = classify_folder(top_folder)
     ext = os.path.splitext(path.split("!")[-1])[1].lstrip(".").lower() or "unknown"

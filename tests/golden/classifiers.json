@@ -1,0 +1,334 @@
+{
+ "folder": [
+  "uncategorized",
+  "uncategorized",
+  "personal",
+  "backup",
+  "uncategorized",
+  "research",
+  "personal",
+  "uncategorized",
+  "backup",
+  "uncategorized"
+ ],
+ "topic": [
+  [
+   "Personal Docs",
+   "Personal Docs"
+  ],
+  [
+   "Backups",
+   "Backups"
+  ],
+  [
+   "Employment(Partial) 3",
+   "pdf"
+  ],
+  [
+   "zip",
+   "zip"
+  ],
+  [
+   "(root)",
+   ""
+  ],
+  [
+   "Energy",
+   "Documents"
+  ],
+  [
+   "Research",
+   "Research"
+  ],
+  [
+   "sub",
+   "Downloads"
+  ],
+  [
+   "My Drive",
+   "My Drive"
+  ],
+  [
+   "x",
+   "docs"
+  ],
+  [
+   "Saved from Web",
+   "Saved from Web"
+  ],
+  [
+   "Photos",
+   "Photos"
+  ],
+  [
+   "Finance",
+   "Finance"
+  ],
+  [
+   "noext",
+   "noext"
+  ],
+  [
+   "Type",
+   "Type"
+  ]
+ ],
+ "year": [
+  null,
+  null,
+  2023,
+  2000,
+  1969,
+  null,
+  null
+ ],
+ "tags": [
+  [
+   {
+    "tag": "category:personal"
+   },
+   {
+    "tag": "topic:Personal Docs"
+   },
+   {
+    "tag": "source:dropbox"
+   },
+   {
+    "tag": "filetype:pdf"
+   }
+  ],
+  [
+   {
+    "tag": "category:backup"
+   },
+   {
+    "tag": "topic:Backups"
+   },
+   {
+    "tag": "source:dropbox"
+   },
+   {
+    "tag": "filetype:pdf"
+   }
+  ],
+  [
+   {
+    "tag": "category:research"
+   },
+   {
+    "tag": "topic:Employment(Partial) 3"
+   },
+   {
+    "tag": "source:dropbox"
+   },
+   {
+    "tag": "filetype:pdf"
+   },
+   {
+    "tag": "year:2023"
+   }
+  ],
+  [
+   {
+    "tag": "category:research"
+   },
+   {
+    "tag": "topic:zip"
+   },
+   {
+    "tag": "source:dropbox"
+   },
+   {
+    "tag": "filetype:pdf"
+   },
+   {
+    "tag": "year:2000"
+   }
+  ],
+  [
+   {
+    "tag": "category:uncategorized"
+   },
+   {
+    "tag": "topic:(root)"
+   },
+   {
+    "tag": "source:dropbox"
+   },
+   {
+    "tag": "filetype:pdf"
+   },
+   {
+    "tag": "year:1969"
+   }
+  ],
+  [
+   {
+    "tag": "category:uncategorized"
+   },
+   {
+    "tag": "topic:Energy"
+   },
+   {
+    "tag": "source:dropbox"
+   },
+   {
+    "tag": "filetype:epub"
+   }
+  ],
+  [
+   {
+    "tag": "category:research"
+   },
+   {
+    "tag": "topic:Research"
+   },
+   {
+    "tag": "source:dropbox"
+   },
+   {
+    "tag": "filetype:pdf"
+   }
+  ],
+  [
+   {
+    "tag": "category:uncategorized"
+   },
+   {
+    "tag": "topic:sub"
+   },
+   {
+    "tag": "source:dropbox"
+   },
+   {
+    "tag": "filetype:pdf"
+   }
+  ],
+  [
+   {
+    "tag": "category:backup"
+   },
+   {
+    "tag": "topic:My Drive"
+   },
+   {
+    "tag": "source:dropbox"
+   },
+   {
+    "tag": "filetype:docx"
+   }
+  ],
+  [
+   {
+    "tag": "category:uncategorized"
+   },
+   {
+    "tag": "topic:x"
+   },
+   {
+    "tag": "source:dropbox"
+   },
+   {
+    "tag": "filetype:pptx"
+   },
+   {
+    "tag": "year:2023"
+   }
+  ],
+  [
+   {
+    "tag": "category:uncategorized"
+   },
+   {
+    "tag": "topic:Saved from Web"
+   },
+   {
+    "tag": "source:dropbox"
+   },
+   {
+    "tag": "filetype:html"
+   },
+   {
+    "tag": "year:2000"
+   }
+  ],
+  [
+   {
+    "tag": "category:personal"
+   },
+   {
+    "tag": "topic:Photos"
+   },
+   {
+    "tag": "source:dropbox"
+   },
+   {
+    "tag": "filetype:jpg"
+   },
+   {
+    "tag": "year:1969"
+   }
+  ],
+  [
+   {
+    "tag": "category:research"
+   },
+   {
+    "tag": "topic:Finance"
+   },
+   {
+    "tag": "source:dropbox"
+   },
+   {
+    "tag": "filetype:mobi"
+   }
+  ],
+  [
+   {
+    "tag": "category:research"
+   },
+   {
+    "tag": "topic:noext"
+   },
+   {
+    "tag": "source:dropbox"
+   },
+   {
+    "tag": "filetype:unknown"
+   }
+  ],
+  [
+   {
+    "tag": "category:uncategorized"
+   },
+   {
+    "tag": "topic:Type"
+   },
+   {
+    "tag": "source:dropbox"
+   },
+   {
+    "tag": "filetype:ris"
+   }
+  ]
+ ],
+ "classify": [
+  "IT / Software / Computer Science",
+  "Finance / Investing / Markets",
+  "Energy (power, fuel, batteries)",
+  "Energy (power, fuel, batteries)",
+  "Business, tender & corporate documents",
+  "Personal & administrative documents",
+  "Education / Exams",
+  "Other / Unclassified",
+  "Other / Unclassified",
+  "Other / Unclassified",
+  "IT / Software / Computer Science",
+  "IT / Software / Computer Science",
+  "Sports / Cricket",
+  "Reports & presentations (general)",
+  "Reference material (Wikipedia / how-to)",
+  "Other / Unclassified",
+  "Medical / Healthcare"
+ ]
+}

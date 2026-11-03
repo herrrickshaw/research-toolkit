@@ -16,6 +16,8 @@ private key, with library read/write) - set ZOTERO_API_KEY and
 ZOTERO_LIBRARY_PATH (e.g. "users/21600525", found in that same items JSON
 under library.id, or in any zotero.org URL for your library).
 """
+from __future__ import annotations
+
 import json
 import os
 import time
@@ -36,7 +38,9 @@ else:
 KEY_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".zotero_api_key.json")
 
 
-def _request(method, path, headers=None, data=None, timeout=60, retries=2):
+def _request(method: str, path: str, headers: dict | None = None, data: bytes | None = None,
+             timeout: int = 60, retries: int = 2) -> tuple:
+    """HTTP call -> (status, headers, body_bytes); status None if the connection failed after retries."""
     url = path if path.startswith("http://") or path.startswith("https://") else f"{BASE}{path}"
     for attempt in range(retries + 1):
         req = urllib.request.Request(url, data=data, method=method)
@@ -55,13 +59,14 @@ def _request(method, path, headers=None, data=None, timeout=60, retries=2):
             return None, {}, str(e).encode()
 
 
-def get_server_id():
+def get_server_id() -> str | None:
     """Local mode only - the cloud API has no equivalent concept."""
     status, headers, _ = _request("GET", f"/{LIBRARY_PATH}/items?limit=1")
     return headers.get("Zotero-Server-ID")
 
 
-def load_or_create_key(app_name="dropbox-zotero-import"):
+def load_or_create_key(app_name: str = "dropbox-zotero-import") -> str:
+    """API key: ZOTERO_API_KEY in cloud mode, else the cached/newly authorized local key."""
     if MODE == "cloud":
         key = os.environ.get("ZOTERO_API_KEY")
         if not key:
@@ -88,6 +93,8 @@ def load_or_create_key(app_name="dropbox-zotero-import"):
 
 
 class ZoteroCRUD:
+    """Minimal Zotero CRUD client bound to the module-level mode/base URL."""
+
     def __init__(self):
         self.key = load_or_create_key()
         self.server_id = get_server_id() if MODE != "cloud" else None
@@ -130,53 +137,68 @@ class ZoteroCRUD:
         except json.JSONDecodeError:
             return []
 
+    def _authorize_upload(self, item_key: str, md5: str, filename: str, filesize: int, mtime_ms: int):
+        """Step 1: returns (auth_dict, None) or (None, (status, body_excerpt))."""
+        status, _, body = _request(
+            "POST", f"/{LIBRARY_PATH}/items/{item_key}/file",
+            headers=self._headers({
+                "Content-Type": "application/x-www-form-urlencoded",
+                "If-None-Match": "*",
+            }),
+            data=(
+                f"md5={md5}&filename={urllib.parse.quote(filename)}"
+                f"&filesize={filesize}&mtime={mtime_ms}"
+            ).encode(),
+            timeout=30,
+        )
+        if status != 200:
+            return None, (status, body[:300])
+        return json.loads(body), None
+
+    def _send_file_bytes(self, auth: dict, local_path: str, content_type: str, timeout: int):
+        """Step 2: returns None on success or (status, body_excerpt)."""
+        with open(local_path, "rb") as f:
+            filedata = f.read()
+        envelope = auth.get("prefix", "").encode() + filedata + auth.get("suffix", "").encode()
+        status, _, body = _request(
+            "POST", auth["url"],
+            headers={"Content-Type": auth.get("contentType", content_type)},
+            data=envelope,
+            timeout=timeout,
+        )
+        if status not in (200, 201, 204):
+            return status, body[:300]
+        return None
+
+    def _register_upload(self, item_key: str, upload_key: str):
+        """Step 3: returns (ok, status, body_excerpt)."""
+        status, _, body = _request(
+            "POST", f"/{LIBRARY_PATH}/items/{item_key}/file",
+            headers=self._headers({
+                "Content-Type": "application/x-www-form-urlencoded",
+                "If-None-Match": "*",
+            }),
+            data=f"upload={upload_key}".encode(),
+            timeout=30,
+        )
+        return status == 204, status, body[:300]
+
     def upload_attachment_file(self, item_key, local_path, filename, content_type, md5, mtime_ms, filesize, retries=2, timeout=300):
         """Full 3-step attachment upload: authorize -> upload bytes -> register.
         Local mode's authorize response has empty prefix/suffix (raw bytes
         upload); the real cloud API's S3-backed authorize returns non-empty
         prefix/suffix that must sandwich the file bytes in a multipart-style
         envelope - both are handled the same way here since local's are
-        just empty strings."""
+        just empty strings. Returns (ok, status, body_excerpt)."""
         for attempt in range(retries + 1):
             try:
-                status, _, body = _request(
-                    "POST", f"/{LIBRARY_PATH}/items/{item_key}/file",
-                    headers=self._headers({
-                        "Content-Type": "application/x-www-form-urlencoded",
-                        "If-None-Match": "*",
-                    }),
-                    data=(
-                        f"md5={md5}&filename={urllib.parse.quote(filename)}"
-                        f"&filesize={filesize}&mtime={mtime_ms}"
-                    ).encode(),
-                    timeout=30,
-                )
-                if status != 200:
-                    return False, status, body[:300]
-                auth = json.loads(body)
-
-                with open(local_path, "rb") as f:
-                    filedata = f.read()
-                envelope = auth.get("prefix", "").encode() + filedata + auth.get("suffix", "").encode()
-                status, _, body = _request(
-                    "POST", auth["url"],
-                    headers={"Content-Type": auth.get("contentType", content_type)},
-                    data=envelope,
-                    timeout=timeout,
-                )
-                if status not in (200, 201, 204):
-                    return False, status, body[:300]
-
-                status, _, body = _request(
-                    "POST", f"/{LIBRARY_PATH}/items/{item_key}/file",
-                    headers=self._headers({
-                        "Content-Type": "application/x-www-form-urlencoded",
-                        "If-None-Match": "*",
-                    }),
-                    data=f"upload={auth['uploadKey']}".encode(),
-                    timeout=30,
-                )
-                return status == 204, status, body[:300]
+                auth, failure = self._authorize_upload(item_key, md5, filename, filesize, mtime_ms)
+                if failure:
+                    return False, failure[0], failure[1]
+                failure = self._send_file_bytes(auth, local_path, content_type, timeout)
+                if failure:
+                    return False, failure[0], failure[1]
+                return self._register_upload(item_key, auth["uploadKey"])
             except (TimeoutError, urllib.error.URLError) as e:
                 if attempt < retries:
                     time.sleep(5 * (attempt + 1))
