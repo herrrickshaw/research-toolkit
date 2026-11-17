@@ -78,7 +78,8 @@ fitz.TOOLS.mupdf_display_warnings(False)
 # (data validation, sparklines, ...) — cosmetic, extraction still works.
 warnings.filterwarnings("ignore", category=UserWarning, module="openpyxl")
 
-REPO_DIR = Path("/Users/umashankar/research-toolkit")
+REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
+REPO_DIR = Path(REPO_ROOT)
 DB_PATH = REPO_DIR / "document_catalog.duckdb"
 MD_OUTPUT_DIR = REPO_DIR / "md_corpus"
 STAGE_DIR = REPO_DIR / "pdf2md_stage"
@@ -92,7 +93,7 @@ CLOUD_DEST_FOLDER = "research_md_corpus"  # created under the SAME remote each i
 # PATH that doesn't include Homebrew or ~/.local/bin (documented elsewhere
 # in this account's automation as the cqlsh/rclone-under-launchd issue).
 RCLONE_BIN = os.environ.get("PDF2MD_RCLONE_BIN", "/opt/homebrew/bin/rclone")
-MARKITDOWN_BIN = os.environ.get("PDF2MD_MARKITDOWN_BIN", "/Users/umashankar/.local/bin/markitdown")
+MARKITDOWN_BIN = os.environ.get("PDF2MD_MARKITDOWN_BIN", os.path.expanduser("~/.local/bin/markitdown"))
 MARKITDOWN_TIMEOUT_S = int(os.environ.get("PDF2MD_MARKITDOWN_TIMEOUT_S", "180"))
 SOFFICE_BIN = os.environ.get("PDF2MD_SOFFICE_BIN", "/opt/homebrew/bin/soffice")
 SOFFICE_TIMEOUT_S = int(os.environ.get("PDF2MD_SOFFICE_TIMEOUT_S", "900"))

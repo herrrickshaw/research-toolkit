@@ -10,18 +10,13 @@ this existed.
 import datetime
 import os
 
-PERSONAL_KEYWORDS = [
-    "personal", "tax", "itr", "pay slip", "payslip", "pay-slip",
-    "investment proof", "lic ", "id files", "id proof", "ration card",
-    "credential", "resume", " cv", "cv ", "job application", "employment",
-    "relieving", "medical", "battery passport", "photo", "camera upload",
-    "mobile upload", "screenshot", "coinbase", "wallet",
-    "linkedindataexport", "onedrive", "takeout", "classic sites", "vault",
-    "aadha", "passport", "indmoney", "hellosign", "meet recording",
-    "zoom meeting", "chocolate factory", "potential client",
-    "standard-", "standard)", "language proficiency", "forms signed",
-    "10th standard", "12th standard",
-]
+import toolkit_config
+
+# Folder-name fragments that mark a source folder as "personal". Person-specific, so
+# it is NOT kept in the repository: set RESEARCH_TOOLKIT_PERSONAL_KEYWORDS (comma
+# separated) or personal_keywords in the optional config file (see toolkit_config.py).
+# Empty by default, in which case no folder is classified as personal.
+PERSONAL_KEYWORDS = [k.lower() for k in toolkit_config.get_list("personal_keywords")]
 
 BACKUP_KEYWORDS = [
     "backup", "kopia", "restic", "market-data", "market_data",

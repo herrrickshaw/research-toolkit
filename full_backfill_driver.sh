@@ -5,7 +5,7 @@
 # next invocation (this driver, or tomorrow's 05:30 launchd run) resumes
 # exactly where it left off via fulltext_md.
 set -uo pipefail
-cd /Users/umashankar/research-toolkit
+cd "$(cd "$(dirname "$0")" && pwd)"
 LOG=full_backfill_run.log
 echo "=== full backfill driver started $(date) ===" >> "$LOG"
 while true; do
@@ -18,7 +18,7 @@ print(total - done)
 ")
   if [ "$remaining" -le 0 ]; then
     echo "=== backfill complete $(date) ===" >> "$LOG"
-    launchctl bootstrap gui/$(id -u) /Users/umashankar/Library/LaunchAgents/com.user.pdftomarkdown.plist >> "$LOG" 2>&1
+    launchctl bootstrap gui/$(id -u) $HOME/Library/LaunchAgents/com.user.pdftomarkdown.plist >> "$LOG" 2>&1
     echo "=== daily 05:30 job re-enabled ===" >> "$LOG"
     break
   fi

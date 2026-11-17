@@ -10,7 +10,7 @@ fetch the document itself — never cite a search snippet as if it had been read
 
 - **On the owner's Mac:** `fetch_source.py "<url | doi:… | celex:… | arxiv:…>" --out ./sources`
   (in `~/bin`; full guide `~/bin/SOURCE_FETCH_TOOLKIT.md`). Scheduled/unattended runs use only
-  `bash /Users/umashankar/bin/fetch_source.sh "<target>"` (allowlisted) and then Read the `.txt` it reports.
+  `bash ~/bin/fetch_source.sh "<target>"` (allowlisted) and then Read the `.txt` it reports.
 - **Elsewhere (cloud sessions, CI):** follow the same ladder by hand — direct GET with a browser User-Agent →
   headless browser only if the page needs JavaScript → official alternates (DOI → OpenAlex
   `api.openalex.org/works/doi:<doi>` locations → repository copy; EUR-Lex → EU Publications Office

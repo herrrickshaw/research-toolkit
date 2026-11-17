@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Gate G3: a real "Topics" parent collection exists with populated children."""
 import json
+import os
 import sys
 
-sys.path.insert(0, "/Users/umashankar/research-toolkit")
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, REPO_ROOT)
 from zotero_crud import ZoteroCRUD, _request
 
 

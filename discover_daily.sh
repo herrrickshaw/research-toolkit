@@ -13,7 +13,7 @@
 # It also flags top-level Dropbox folders that appeared since the last run, so a new
 # dumping ground gets noticed instead of silently skipped.
 set -uo pipefail
-cd /Users/umashankar/research-toolkit
+cd "$(cd "$(dirname "$0")" && pwd)"
 PY=/opt/homebrew/bin/python3
 RCLONE=/opt/homebrew/bin/rclone
 echo "=== discover_daily $(date) ==="

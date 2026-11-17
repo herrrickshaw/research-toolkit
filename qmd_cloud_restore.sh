@@ -17,11 +17,12 @@ set -euo pipefail
 
 RCLONE_BIN=/opt/homebrew/bin/rclone
 ZSTD_BIN=/opt/homebrew/bin/zstd
-MD_CORPUS_PARENT=/Users/umashankar/research-toolkit
-MD_CORPUS=/Users/umashankar/research-toolkit/md_corpus
-QMD_CACHE_DIR=/Users/umashankar/.cache/qmd
+TOOLKIT_DIR="$(cd "$(dirname "$0")" && pwd)"
+MD_CORPUS_PARENT="$TOOLKIT_DIR"
+MD_CORPUS="$TOOLKIT_DIR/md_corpus"
+QMD_CACHE_DIR="$HOME/.cache/qmd"
 QMD_INDEX="$QMD_CACHE_DIR/index.sqlite"
-TMP_DIR=/Users/umashankar/research-toolkit/qmd_restore_tmp
+TMP_DIR="$TOOLKIT_DIR/qmd_restore_tmp"
 
 FORCE=false
 REMOTE="dropbox:qmd_cloud_backup"

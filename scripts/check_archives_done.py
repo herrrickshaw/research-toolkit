@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Gate G6: both archive-extraction passes reached their completion marker."""
+import os
 import sys
 
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LOGS = [
-    "/private/tmp/claude-501/-Users-umashankar/cbbd889a-6c4e-47b9-85de-60aa65a42e93/scratchpad/archive_run.log",
-    "/Users/umashankar/research-toolkit/gdrive_archive_run.log",
+    os.path.join(REPO_ROOT, "gdrive_archive_run.log"),
 ]
 
 all_done = True

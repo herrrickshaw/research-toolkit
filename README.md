@@ -70,6 +70,32 @@ All three are resumable via JSONL log files (`zotero_import_log.jsonl`, `zotero_
 | `ZOTERO_ARCHIVE_LOG` | `./zotero_archive_log.jsonl` | Per-archive resume log |
 | `ZOTERO_DISK_SAFETY_MARGIN_GB` | `5` | Minimum free disk space to always keep |
 
+### Machine- and person-specific settings (not stored in the repo)
+
+Source paths are resolved relative to the repository checkout (scripts) or `$HOME`
+(`~/.cache/qmd`, `~/.local/bin/markitdown`, `~/.config/market-secrets/credentials.env`).
+Values that identify a person or a machine are never committed; they default to empty and
+are read from environment variables or an optional untracked TOML file
+(`$RESEARCH_TOOLKIT_CONFIG`, default `~/.config/research-toolkit/config.toml`; see
+`toolkit_config.py`):
+
+| Setting (config key / env var) | Default | Purpose |
+|---|---|---|
+| `personal_keywords` / `RESEARCH_TOOLKIT_PERSONAL_KEYWORDS` (comma separated) | empty | Lower-case folder-name fragments that `categorize.py` tags as `personal`. Empty means nothing is classified personal. Items may carry significant spaces (e.g. `"lic "`), which is easiest to express in the TOML list. |
+| `privacy_names` / `RESEARCH_TOOLKIT_PRIVACY_NAMES` | empty | Names whose appearance in a title or document head drops it from `insights/` outputs. |
+| `own_path_patterns` / `RESEARCH_TOOLKIT_OWN_PATH_PATTERNS` | empty | Extra path fragments `insights/` treats as your own machine backups, not literature. |
+| `RESEARCH_TOOLKIT_CREDENTIALS` | `~/.config/market-secrets/credentials.env` | Env file read by `smart_classify.py`. |
+| `RESEARCH_INSIGHTS_PYTHON` | `~/.venvs/research-insights/bin/python` | Interpreter used by `insights/run_insights.sh`. |
+
+Example `config.toml`:
+
+```toml
+personal_keywords = ["tax", "payslip", "passport", "lic "]
+privacy_names = ["Firstname", "Lastname"]
+```
+
+Run `python -m pytest tests` for the unit tests (they inject synthetic keyword lists).
+
 Supported document extensions (edit `ALLOWED_EXTENSIONS` in `zotero_dropbox_import.py` to change): `.pdf .doc .docx .ppt .pptx .epub .djvu .mobi .chm .ris`
 
 ## Files

@@ -34,10 +34,11 @@ set -euo pipefail
 RCLONE_BIN=/opt/homebrew/bin/rclone
 ZSTD_BIN=/opt/homebrew/bin/zstd
 REMOTES=("dropbox:qmd_cloud_backup" "googledrive:qmd_cloud_backup")
-MD_CORPUS=/Users/umashankar/research-toolkit/md_corpus
-QMD_INDEX=/Users/umashankar/.cache/qmd/index.sqlite
-SNAPSHOT_DIR=/Users/umashankar/research-toolkit/qmd_backup_snapshot
-LOG=/Users/umashankar/research-toolkit/qmd_cloud_backup.log
+TOOLKIT_DIR="$(cd "$(dirname "$0")" && pwd)"
+MD_CORPUS="$TOOLKIT_DIR/md_corpus"
+QMD_INDEX="$HOME/.cache/qmd/index.sqlite"
+SNAPSHOT_DIR="$TOOLKIT_DIR/qmd_backup_snapshot"
+LOG="$TOOLKIT_DIR/qmd_cloud_backup.log"
 ZSTD_LEVEL="${QMD_BACKUP_ZSTD_LEVEL:-15}"   # 1-22; 15 is a reasonable ratio/time balance for a nightly job
 
 mkdir -p "$SNAPSHOT_DIR"

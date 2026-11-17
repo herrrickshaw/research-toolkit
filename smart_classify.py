@@ -25,11 +25,12 @@ import time
 import urllib.error
 import urllib.request
 
-sys.path.insert(0, "/Users/umashankar/research-toolkit")
+REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, REPO_ROOT)
 from zotero_crud import ZoteroCRUD, _request
 
-CREDENTIALS_FILE = "/Users/umashankar/.config/market-secrets/credentials.env"
-CLASSIFY_LOG_FILE = os.environ.get("ZOTERO_CLASSIFY_LOG", "/Users/umashankar/research-toolkit/zotero_classify_log.jsonl")
+CREDENTIALS_FILE = os.environ.get("RESEARCH_TOOLKIT_CREDENTIALS", os.path.expanduser("~/.config/market-secrets/credentials.env"))
+CLASSIFY_LOG_FILE = os.environ.get("ZOTERO_CLASSIFY_LOG", os.path.join(REPO_ROOT, "zotero_classify_log.jsonl"))
 PAGE_SIZE = 100
 MODEL = "openai/gpt-oss-20b"  # fast + cheap on Groq, plenty for short-title classification
 VALID_CATEGORIES = {"personal", "research", "backup", "uncategorized"}

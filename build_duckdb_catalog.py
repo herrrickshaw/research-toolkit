@@ -39,11 +39,12 @@ import time
 
 import duckdb
 
-sys.path.insert(0, "/Users/umashankar/research-toolkit")
+REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, REPO_ROOT)
 from zotero_crud import ZoteroCRUD, _request
 
-DB_PATH = "/Users/umashankar/research-toolkit/document_catalog.duckdb"
-CHECKPOINT_FILE = "/Users/umashankar/research-toolkit/zotero_catalog_checkpoint.json"
+DB_PATH = os.path.join(REPO_ROOT, "document_catalog.duckdb")
+CHECKPOINT_FILE = os.path.join(REPO_ROOT, "zotero_catalog_checkpoint.json")
 PAGE_SIZE = 100
 
 
