@@ -1,6 +1,7 @@
 """Tests for insights/privacy.py and the pure claim-extraction helpers of
 insights/build_insights.py. Synthetic text only."""
 
+import re
 import sys
 from pathlib import Path
 
@@ -37,9 +38,11 @@ def test_literature_is_kept(title, head):
     assert not privacy.is_sensitive(title, head)
 
 
-def test_owner_name_only_blocks_literature_kind():
-    assert privacy.is_sensitive("x", "written by Umashankar")
-    assert not privacy.is_sensitive("x", "written by Umashankar", kind="own")
+def test_owner_name_only_blocks_literature_kind(monkeypatch):
+    # Owner names come from the untracked per-machine config, so inject a synthetic one.
+    monkeypatch.setattr(privacy, "NAME_DOC", re.compile("Zzyzx", re.I))
+    assert privacy.is_sensitive("x", "written by Zzyzx")
+    assert not privacy.is_sensitive("x", "written by Zzyzx", kind="own")
 
 
 def test_only_first_3000_chars_of_body_are_scanned():
