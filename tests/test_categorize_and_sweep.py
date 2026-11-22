@@ -35,7 +35,9 @@ def test_extract_topic(path, expected):
     ("", "uncategorized"),
     ("Hydrogen Economy", "research"),
 ])
-def test_classify_folder(folder, expected):
+def test_classify_folder(monkeypatch, folder, expected):
+    # Personal keywords come from the untracked per-machine config, so inject synthetic ones.
+    monkeypatch.setattr(categorize, "PERSONAL_KEYWORDS", ["tax", "passport"])
     assert categorize.classify_folder(folder) == expected
 
 
