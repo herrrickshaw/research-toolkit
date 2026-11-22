@@ -274,3 +274,14 @@ def test_main_skips_already_classified_items(env, monkeypatch, capsys):
     monkeypatch.setattr(sc, "classify_title", lambda t, k: pytest.fail("must not classify"))
     sc.main()
     assert "Found 0 items to classify" in capsys.readouterr().out
+
+
+def test_main_progress_line_every_25_classified(env, monkeypatch, capsys):
+    (env / "creds.env").write_text("GROQ_API_KEY=dummy\n")
+    items = [item(f"K{i:03d}", 1, title="t", tags=["category:uncategorized"]) for i in range(26)]
+    FakeZotero(items).install(monkeypatch, sc)
+    monkeypatch.setattr(sc, "classify_title", lambda t, k: ({"topic": "T", "category": "research"}, None))
+    sc.main()
+    out = capsys.readouterr().out
+    assert out.count("classified so far") == 1 and "  ... 25 classified so far" in out
+    assert "classified=26 failed=0" in out
