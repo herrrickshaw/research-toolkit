@@ -465,3 +465,30 @@ def test_run_max_mb_cap_is_inclusive(env):
     assert (env.cloud / "p" / "1.pdf").stat().st_size == (env.cloud / "p" / "0.pdf").stat().st_size
     p2m.run(max_docs=10, max_mb=size_mb * 2)            # exactly room for both: neither is deferred
     assert sorted(env.rows()) == ["K0", "K1"]
+
+
+def test_ext_for_sanitises_and_caps_at_ten_chars():
+    assert p2m.ext_for("a/b.abcdefghijklmnop") == ".abcdefghij"
+    assert p2m.ext_for("a/b.p-d_f!") == ".pdf"
+    assert p2m.ext_for("a/noext") == ".bin"
+    assert p2m.ext_for("a/b.!!!") == ".bin"
+
+
+def test_status_near_empty_threshold_is_strictly_below_200(env, capsys):
+    con = duckdb.connect(str(p2m.DB_PATH))
+    p2m.init_table(con)
+    for key, chars in (("A", 199), ("B", 200), ("C", 201)):
+        p2m.record(con, key, "m", "t", "dropbox", "p", None, "ok", chars, 1.0, None, cloud_status="ok")
+    con.close()
+    p2m.run(max_docs=1, max_mb=1, status_only=True)
+    assert "near-empty (<200 chars, likely scanned, no OCR run): 1 (33.3%)" in capsys.readouterr().out
+
+
+def test_extraction_error_keeps_last_400_chars(tmp_path, monkeypatch):
+    def boom(path):
+        raise ValueError("x" * 500 + "END")
+
+    monkeypatch.setattr(p2m, "extract_text_docx", boom)
+    text, err = p2m.extract_text(tmp_path / "a.docx", "docx")
+    assert text is None
+    assert err == "docx extraction error: " + "x" * 397 + "END"
