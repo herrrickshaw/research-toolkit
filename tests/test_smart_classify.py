@@ -285,3 +285,9 @@ def test_main_progress_line_every_25_classified(env, monkeypatch, capsys):
     out = capsys.readouterr().out
     assert out.count("classified so far") == 1 and "  ... 25 classified so far" in out
     assert "classified=26 failed=0" in out
+
+
+def test_bad_json_error_truncated_to_200(monkeypatch):
+    patch_urlopen(monkeypatch, Resp(chat("{" + "z" * 400 + "}")))
+    res, err = sc.classify_title("t", "k")
+    assert res is None and err == "bad-json: {" + "z" * 199

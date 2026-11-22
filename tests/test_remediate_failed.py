@@ -361,3 +361,10 @@ def test_main_only_processes_currently_failing_paths(env, monkeypatch):
         f.write(json.dumps({"path": "a/fixed.pdf", "status": "ok"}) + "\n")
     rf.main()
     assert crud.created == []
+
+
+def test_main_attachment_item_is_a_pdf_content_type(env, monkeypatch):
+    crud = StubCRUD()
+    setup_main(env, monkeypatch, ["Books/Jane Doe - T.pdf"], crud, enriched=None)
+    rf.main()
+    assert crud.created[1]["contentType"] == "application/pdf"

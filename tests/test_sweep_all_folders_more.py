@@ -445,3 +445,24 @@ def test_main_is_idempotent_on_rerun(env, monkeypatch):
     World(monkeypatch, spec)
     run_main(monkeypatch, "--fresh")
     assert len(docs(env)) == 1
+
+
+def test_main_dry_run_requests_read_only_connection(env, monkeypatch):
+    World(monkeypatch, {"dropbox:": {"top": []}, "googledrive:": {"top": []}})
+    seen = []
+    real = sw.connect_with_retry
+    monkeypatch.setattr(sw, "connect_with_retry", lambda read_only, **k: seen.append(read_only) or real(read_only=read_only, **k))
+    run_main(monkeypatch, "--dry-run")
+    run_main(monkeypatch)
+    assert seen == [True, False]
+
+
+def test_walk_loose_file_listing_uses_60s_timeout(env, monkeypatch):
+    timeouts = []
+
+    def run(cmd, capture_output=True, text=True, timeout=None):
+        timeouts.append(timeout)
+        return Proc(0, "")
+
+    walk(monkeypatch, rec=lambda t, to: None if t == "r:A" else [], lsd=lambda t, timeout=60: ["B"] if t == "r:A" else [], run=run)
+    assert timeouts == [60]

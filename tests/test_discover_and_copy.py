@@ -367,3 +367,12 @@ def test_copy_main_progress_line_every_100(cenv, db, monkeypatch, capsys):
     occ.main()
     out = capsys.readouterr().out
     assert out.count("... 100 copied so far") == 1
+
+
+def test_folder_main_opens_db_read_only_only_for_dry_run(monkeypatch, db):
+    seen = []
+    real = duckdb.connect
+    monkeypatch.setattr(dff.duckdb, "connect", lambda p, read_only=False: seen.append(read_only) or real(p, read_only=read_only))
+    run_folder(monkeypatch, db, {}, ["--dry-run", "dropbox:word"])
+    run_folder(monkeypatch, db, {}, ["dropbox:word"])
+    assert seen == [True, False]

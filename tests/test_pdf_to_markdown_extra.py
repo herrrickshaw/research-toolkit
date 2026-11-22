@@ -456,3 +456,12 @@ def test_main_parses_arguments(monkeypatch):
     monkeypatch.setattr(sys, "argv", ["pdf_to_markdown.py", "--max-docs", "7", "--max-mb", "2.5", "--status"])
     p2m.main()
     assert seen["a"] == (7, 2.5, True)
+
+
+def test_run_max_mb_cap_is_inclusive(env):
+    for i in range(2):
+        env.add(f"K{i}", "t", f"p/{i}.pdf", content=lambda f: make_pdf(f))
+    size_mb = (env.cloud / "p" / "0.pdf").stat().st_size / (1024 * 1024)
+    assert (env.cloud / "p" / "1.pdf").stat().st_size == (env.cloud / "p" / "0.pdf").stat().st_size
+    p2m.run(max_docs=10, max_mb=size_mb * 2)            # exactly room for both: neither is deferred
+    assert sorted(env.rows()) == ["K0", "K1"]

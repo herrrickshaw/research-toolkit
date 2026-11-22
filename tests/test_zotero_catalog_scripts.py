@@ -468,3 +468,11 @@ def test_ignored_folders_never_reported_or_recorded(folders, monkeypatch, capsys
 def test_removed_folders_do_not_alert(folders, monkeypatch, capsys):
     run_folders(folders, ["a", "b"], monkeypatch, capsys)
     assert "none" in run_folders(folders, ["a"], monkeypatch, capsys)
+
+
+def test_create_collection_200_with_empty_body_counts_as_bad_status_not_malformed(oenv, monkeypatch, capsys):
+    fz = FakeZotero().install(monkeypatch, otc)
+    fz.override(lambda m, p: m == "POST", [(200, b"")])
+    assert otc.get_or_create_collection(FakeCRUD(), "T", None, {}).startswith("COL")
+    out = capsys.readouterr().out
+    assert "status=200" in out and "malformed" not in out

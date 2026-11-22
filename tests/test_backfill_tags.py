@@ -170,3 +170,11 @@ def test_main_malformed_page_is_retried(env, monkeypatch, capsys):
 def test_main_empty_library(env, monkeypatch, capsys):
     run(env, monkeypatch, [])
     assert "seen=0 updated=0 skipped=0 failed=0 complete=True" in capsys.readouterr().out
+
+
+def test_main_listing_succeeds_on_tenth_attempt(env, monkeypatch, capsys):
+    fz = FakeZotero(lib()).install(monkeypatch, bt)
+    fz.override(lambda m, p: m == "GET" and "start=0" in p, [(500, b"x")] * 9)
+    bt.main()
+    out = capsys.readouterr().out
+    assert "seen=4" in out and "complete=True" in out and out.count("[LIST-RETRY]") == 9

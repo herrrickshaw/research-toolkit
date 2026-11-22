@@ -359,3 +359,14 @@ def test_main_skips_excluded_folders_and_finished_archives(env, monkeypatch, cap
     pa.main()
     assert seen == [("loose.zip", 1), ("A/new.zip", 2)]
     assert "across 3 top-level locations" in capsys.readouterr().out
+
+
+def test_zip_size_check_uses_uncompressed_not_compressed_size(env, monkeypatch):
+    z = env / "big.zip"
+    with zipfile.ZipFile(z, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr("doc.pdf", b"a" * 100_000)           # compresses to a few hundred bytes
+    out = env / "out"
+    out.mkdir()
+    monkeypatch.setattr(pa, "free_bytes", lambda: 50_000 + 1000)   # fits the compressed size, not the real one
+    ok, err, _ = pa.extract_archive(str(z), str(out), ".zip")
+    assert ok is False and "uncompressed size 100000 exceeds free space" in err
