@@ -399,3 +399,80 @@ def test_subject_of_without_market_phrase_before_figure():
 
 def test_claim_without_subject_is_dropped():
     assert bi.extract_claims("It is worth USD 5 billion and the market grew.") == []
+
+
+# ---- ordering / boundary behaviour (pinned down after mutation testing) ------------------------
+
+def test_canonical_copy_is_the_one_with_most_chars(world, monkeypatch):
+    con = duckdb.connect(str(world / "cat.duckdb"))
+    con.execute("update fulltext_md set chars = 999999 where item_key = 'LIT001'")
+    con.close()
+    run(monkeypatch)
+    assert dict(q(world, "select item_key, is_canonical from docs where item_key in ('LIT001','DUP001')")) == {
+        "LIT001": True, "DUP001": False}
+
+
+def test_literature_copy_beats_backup_copy_as_canonical(world, monkeypatch):
+    # same text stored once as literature and once in a backup folder -> literature is canonical, kind is literature
+    text = body("solar", 2)
+    (world / "md" / "BK1.md").write_text(text)
+    con = duckdb.connect(str(world / "cat.duckdb"))
+    con.execute("insert into documents(item_key,title,path,category,topic,filetype,year) values ('AAA_BK','Backup copy','laptop_backup/x.md','backup','t','pdf','2023')")
+    con.execute("insert into fulltext_md values ('AAA_BK','Backup copy', ?, 99999999, now(), 'ok')", [str(world / "md" / "BK1.md")])
+    con.close()
+    (world / "md" / "LIT015.md").write_text(text)
+    run(monkeypatch)
+    rows = {r[0]: r[1:] for r in q(world, "select item_key, kind, is_canonical from docs where item_key in ('AAA_BK','LIT015')")}
+    assert rows["LIT015"] == ("literature", True)
+    assert rows["AAA_BK"] == ("literature", False)    # a text that exists as literature anywhere is literature
+
+
+def test_digest_baseline_window_is_seven_days(world, monkeypatch):
+    midnight_7d = dt.datetime.combine(dt.date.today() - dt.timedelta(days=7), dt.time.min)
+    con = duckdb.connect(str(world / "cat.duckdb"))
+    con.execute("update fulltext_md set converted_at = ?", [midnight_7d - dt.timedelta(seconds=1)])           # everyone too old
+    con.execute("update fulltext_md set converted_at = ? where item_key = 'LIT002'", [midnight_7d])           # exactly at the cutoff
+    con.execute("update fulltext_md set converted_at = ? where item_key = 'LIT003'", [midnight_7d + dt.timedelta(days=1)])
+    con.close()
+    run(monkeypatch)
+    txt = (world / "out" / f"digest_{dt.date.today()}.md").read_text()
+    assert "2 baseline digest: documents converted in the last 7 days." in txt
+    assert "Paper battery 1" in txt and "Paper battery 2" in txt and "Paper battery 3" not in txt
+
+
+def test_claim_year_is_the_latest_year_in_the_window():
+    c = bi.extract_claims("From 2019 the global tea market was valued at USD 5 billion, reaching 2030 forecasts.")[0]
+    assert c["year"] == 2030
+
+
+def test_guess_year_includes_current_year_but_not_next():
+    y = dt.date.today().year
+    assert bi.guess_year(f"printed {y}") == y
+    assert bi.guess_year(f"printed {y + 1}") is None
+
+
+def test_contradiction_ratio_bounds(world, monkeypatch):
+    # ratio exactly 2x is kept (>= 2); a 16x spread is treated as a unit mix-up and dropped (<= 15)
+    (world / "md" / "LIT002.md").write_text(body("battery", 1, "The global lithium market was valued at USD 10 billion in 2030 estimates."))
+    run(monkeypatch)
+    (row,) = q(world, "select ratio from contradictions")
+    assert row[0] == pytest.approx(2.0)
+    (world / "md" / "LIT002.md").write_text(body("battery", 1, "The global lithium market was valued at USD 80 billion in 2030 estimates."))
+    run(monkeypatch)
+    assert q(world, "select count(*) from contradictions")[0][0] == 0
+
+
+def test_contradiction_ignores_figures_below_ten_million(world, monkeypatch):
+    (world / "md" / "LIT002.md").write_text(body("battery", 1, "The global lithium market was valued at USD 20 million in 2030 estimates."))
+    (world / "md" / "LIT001.md").write_text(body("battery", 0, "The global lithium market was valued at USD 5 million in 2030 estimates."))
+    (world / "md" / "DUP001.md").write_text(body("battery", 0, "The global lithium market was valued at USD 5 million in 2030 estimates."))
+    run(monkeypatch)
+    assert q(world, "select count(*) from contradictions")[0][0] == 0
+
+
+def test_generic_subject_not_reported_as_contradiction(world, monkeypatch):
+    (world / "md" / "LIT002.md").write_text(body("battery", 1, "The global market was valued at USD 20 billion in 2030 estimates."))
+    (world / "md" / "DUP001.md").write_text(body("battery", 0, "The global market was valued at USD 5 billion in 2030 estimates."))
+    (world / "md" / "LIT001.md").write_text(body("battery", 0, "The global market was valued at USD 5 billion in 2030 estimates."))
+    run(monkeypatch)
+    assert q(world, "select count(*) from contradictions")[0][0] == 0
