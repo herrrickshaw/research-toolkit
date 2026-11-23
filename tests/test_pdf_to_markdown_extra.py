@@ -461,9 +461,10 @@ def test_main_parses_arguments(monkeypatch):
 def test_run_max_mb_cap_is_inclusive(env):
     for i in range(2):
         env.add(f"K{i}", "t", f"p/{i}.pdf", content=lambda f: make_pdf(f))
-    size_mb = (env.cloud / "p" / "0.pdf").stat().st_size / (1024 * 1024)
-    assert (env.cloud / "p" / "1.pdf").stat().st_size == (env.cloud / "p" / "0.pdf").stat().st_size
-    p2m.run(max_docs=10, max_mb=size_mb * 2)            # exactly room for both: neither is deferred
+    # The generated PDFs are not guaranteed to be byte-identical (an embedded timestamp/id can
+    # change their length by a few bytes), so size the cap from the actual total, not 2 x one file.
+    total_mb = sum((env.cloud / "p" / f"{i}.pdf").stat().st_size for i in range(2)) / (1024 * 1024)
+    p2m.run(max_docs=10, max_mb=total_mb)               # exactly room for both: neither is deferred
     assert sorted(env.rows()) == ["K0", "K1"]
 
 
