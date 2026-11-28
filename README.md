@@ -20,7 +20,8 @@ and tries to look up the proper title, author and year.
 1. **Look before touching:** list what is there.
 2. **Import** documents into Zotero. Large folder trees are split into smaller parts so one slow folder does not
    stall everything.
-3. **Open archives** one at a time, to avoid filling the disk. A zip inside another zip is noted but not opened.
+3. **Open archives** one at a time, to avoid filling the disk. A zip inside another zip is opened too, up to a
+   set depth.
 4. **Repair names:** for items that failed, guess the details from the file name and check them against two free
    book catalogues, Open Library and Google Books. The log now records which of the two supplied the match.
 5. **Keep a diary** of every success and failure, so a rerun can skip finished work.
@@ -220,5 +221,5 @@ loss — without breaking live search or risking DB corruption.
 ## Known limitations
 
 - No automatic PDF/EPUB metadata recognition (that's specific to Zotero's browser-connector, not its CRUD API) — items get filename-derived titles unless you run `remediate_failed.py` or use Zotero's own "Retrieve Metadata for PDF" afterward.
-- `.rar` / `.7z` archives are logged as unsupported unless you install `unrar`/`7z` and extend `process_archives.py`'s `extract_archive()`.
-- Nested archives (a zip inside a zip) are logged but not recursively expanded.
+- `.rar` / `.7z` archives are read with `bsdtar` (ships with macOS; `libarchive-tools` on Debian/Ubuntu). Without it they are logged as unsupported. Only `.7z` is covered by a test; no `.rar` sample was tried. Password-protected archives are not opened.
+- Archives inside archives are expanded up to 3 levels and 200 per outer archive; deeper or broken ones are logged in `nested_archives`. Archives already logged `ok` by an earlier version are not reopened. Links inside archives are ignored.

@@ -203,7 +203,8 @@ def test_extract_tar_variants(env, ext, mode):
     assert (out / "d" / "doc.pdf").read_bytes() == b"pdf"
 
 
-def test_extract_unsupported_extension(env):
+def test_extract_unsupported_extension(env, monkeypatch):
+    monkeypatch.setattr(pa, "BSDTAR", None)
     assert pa.extract_archive(str(env / "x"), str(env), ".rar") == (False, "unsupported extension .rar", [])
 
 
@@ -262,6 +263,7 @@ def fake_download(content_builder):
 
 
 def test_unsupported_format_is_logged_not_downloaded(env, monkeypatch, capsys):
+    monkeypatch.setattr(pa, "BSDTAR", None)
     monkeypatch.setattr(pa, "download", lambda *a: pytest.fail("no download"))
     pa.process_one_archive("x/a.RAR", 1, set(), counters())
     assert alog(env)[0]["stage"] == "unsupported-format"

@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-Finds every archive file (.zip, .tar, .tar.gz, .tgz) across the whole
-remote, extracts each one (one level deep - nested archives inside are
-logged and skipped, not recursively expanded), and feeds any document-type
-files found inside through the same Zotero import pipeline as everything
-else (zotero_dropbox_import.process_file).
+Finds every archive file (.zip, .tar, .tar.gz, .tgz, .rar, .7z) across the whole
+remote, extracts each one, and feeds any document-type files found inside
+through the same Zotero import pipeline as everything else
+(zotero_dropbox_import.process_file). Archives inside archives are expanded
+too, up to MAX_NESTED_DEPTH levels and MAX_NESTED_ARCHIVES per outer archive.
 
-.rar / .7z are logged as unsupported (install unrar/7z to handle those)
-rather than silently skipped.
+.rar / .7z need `bsdtar` (libarchive; ships with macOS). Without it they are
+logged as unsupported rather than silently skipped.
 
 Disk-space safe by construction: only one archive is downloaded+extracted
 at a time, both size (compressed, before download) and total uncompressed
@@ -39,7 +39,10 @@ from zotero_dropbox_import import (
 HERE = os.path.dirname(os.path.abspath(__file__))
 ARCHIVE_LOG_FILE = os.environ.get("ZOTERO_ARCHIVE_LOG", os.path.join(HERE, "zotero_archive_log.jsonl"))
 ARCHIVE_EXTENSIONS = {".zip", ".tar", ".gz", ".tgz"}
-UNSUPPORTED_EXTENSIONS = {".rar", ".7z"}
+UNSUPPORTED_EXTENSIONS = {".rar", ".7z"}  # not readable by the standard library
+BSDTAR = shutil.which("bsdtar")  # None: UNSUPPORTED_EXTENSIONS stay unsupported
+MAX_NESTED_DEPTH = 3
+MAX_NESTED_ARCHIVES = 200  # per outer archive; stops archive bombs
 SAFETY_MARGIN_BYTES = int(os.environ.get("ZOTERO_DISK_SAFETY_MARGIN_GB", "5")) * 1024**3
 
 
@@ -124,6 +127,32 @@ def _find_archives_rec(folder, depth, max_depth):
     return out
 
 
+def _extract_with_bsdtar(local_path, dest_dir):
+    """Extract .rar/.7z. Returns (ok, error_message). bsdtar refuses absolute and ".."
+    paths unless given -P, which is never passed."""
+    listing = subprocess.run([BSDTAR, "-tvf", local_path], capture_output=True, text=True,
+                             errors="replace", timeout=600)
+    if listing.returncode != 0:
+        return False, listing.stderr.strip()[:200] or "bsdtar could not list the archive"
+    total = 0
+    for line in listing.stdout.splitlines():
+        parts = line.split(None, 8)  # mode links owner group size month day time name
+        if len(parts) < 9 or not parts[4].isdigit():
+            return False, "could not read sizes from the archive listing"
+        total += int(parts[4])
+    if total > free_bytes() - SAFETY_MARGIN_BYTES:
+        return False, f"uncompressed size {total} exceeds free space"
+    done = subprocess.run([BSDTAR, "-xf", local_path, "-C", dest_dir], capture_output=True,
+                          text=True, errors="replace", timeout=3600)
+    if done.returncode != 0:
+        return False, done.stderr.strip()[:200] or "bsdtar extraction failed"
+    return True, None
+
+
+def _is_archive_name(name):
+    return os.path.splitext(name)[1].lower() in ARCHIVE_EXTENSIONS | UNSUPPORTED_EXTENSIONS
+
+
 def extract_archive(local_path, dest_dir, ext):
     """Returns (ok, error_message, nested_archive_names)."""
     nested = []
@@ -143,6 +172,12 @@ def extract_archive(local_path, dest_dir, ext):
                     return False, f"uncompressed size {total_uncompressed} exceeds free space", []
                 tf.extractall(dest_dir, filter="data")
                 nested = [m.name for m in tf.getmembers() if m.isfile() and os.path.splitext(m.name)[1].lower() in ARCHIVE_EXTENSIONS | UNSUPPORTED_EXTENSIONS]
+        elif ext in UNSUPPORTED_EXTENSIONS and BSDTAR:
+            ok, err = _extract_with_bsdtar(local_path, dest_dir)
+            if not ok:
+                return False, err, []
+            nested = [os.path.relpath(os.path.join(root, f), dest_dir)
+                      for root, _, files in os.walk(dest_dir) for f in files if _is_archive_name(f)]
         else:
             return False, f"unsupported extension {ext}", []
     except Exception as e:
@@ -152,8 +187,8 @@ def extract_archive(local_path, dest_dir, ext):
 
 def process_one_archive(archive_path, size, doc_done, counters):
     ext = os.path.splitext(archive_path)[1].lower()
-    if ext in UNSUPPORTED_EXTENSIONS:
-        print(f"[UNSUPPORTED] {archive_path} ({ext}, no unrar/7z installed)", flush=True)
+    if ext in UNSUPPORTED_EXTENSIONS and not BSDTAR:
+        print(f"[UNSUPPORTED] {archive_path} ({ext}, bsdtar not installed)", flush=True)
         log_archive({"path": archive_path, "status": "fail", "stage": "unsupported-format", "time": time.time()})
         return
 
@@ -181,28 +216,58 @@ def process_one_archive(archive_path, size, doc_done, counters):
         shutil.rmtree(extract_dir, ignore_errors=True)
         return
 
-    if nested:
-        print(f"  ! {len(nested)} nested archive(s) found inside, not expanded: {nested[:5]}", flush=True)
+    totals = {"found": 0, "nested_seen": 0, "unexpanded": [], "out_of_space": False}
+    _import_tree(extract_dir, archive_path, 1, totals, doc_done, counters)
+    shutil.rmtree(extract_dir, ignore_errors=True)
 
-    found = 0
-    for root, _, files in os.walk(extract_dir):
-        for fname in files:
-            fext = os.path.splitext(fname)[1].lower()
-            if fext not in ALLOWED_EXTENSIONS:
-                continue
-            found += 1
+    found, unexpanded = totals["found"], totals["unexpanded"]
+    if unexpanded:
+        print(f"  ! {len(unexpanded)} nested archive(s) found inside, not expanded: {unexpanded[:5]}", flush=True)
+    print(f"  {found} document-type files found inside, processed", flush=True)
+    rec = {"path": archive_path, "status": "ok", "files_found": found, "nested_archives": unexpanded, "time": time.time()}
+    if totals["out_of_space"]:  # not "ok", so a later run with more room retries it
+        rec.update(status="fail", stage="nested-too-large")
+    log_archive(rec)
+
+
+def _import_tree(tree, virtual_root, depth, totals, doc_done, counters):
+    """Import the documents under *tree*, expanding archives found there."""
+    for root, _, files in os.walk(tree):
+        for fname in sorted(files):
             real_path = os.path.join(root, fname)
-            rel_inside = os.path.relpath(real_path, extract_dir)
-            virtual_path = f"{archive_path}!{rel_inside}"
-            virtual_size = os.path.getsize(real_path)
+            if os.path.islink(real_path):  # a link could point outside the archive
+                continue
+            rel_inside = os.path.relpath(real_path, tree)
+            virtual_path = f"{virtual_root}!{rel_inside}"
+            if _is_archive_name(fname):
+                _expand_nested(real_path, rel_inside, virtual_path, depth, totals, doc_done, counters)
+                continue
+            if os.path.splitext(fname)[1].lower() not in ALLOWED_EXTENSIONS:
+                continue
+            totals["found"] += 1
             # process_file() re-downloads by dropbox_path via rclone, which
             # won't work for a path *inside* an archive - so inline the
             # same save logic directly on the already-extracted file.
-            _save_extracted_file(real_path, virtual_path, virtual_size, doc_done, counters)
+            _save_extracted_file(real_path, virtual_path, os.path.getsize(real_path), doc_done, counters)
 
-    shutil.rmtree(extract_dir, ignore_errors=True)
-    print(f"  {found} document-type files found inside, processed", flush=True)
-    log_archive({"path": archive_path, "status": "ok", "files_found": found, "nested_archives": nested, "time": time.time()})
+
+def _expand_nested(real_path, rel_inside, virtual_path, depth, totals, doc_done, counters):
+    if depth > MAX_NESTED_DEPTH or totals["nested_seen"] >= MAX_NESTED_ARCHIVES:
+        totals["unexpanded"].append(rel_inside)
+        return
+    totals["nested_seen"] += 1
+    inner_dir = os.path.join(STAGING_DIR, f"extract_{uuid.uuid4().hex}")
+    os.makedirs(inner_dir, exist_ok=True)
+    try:
+        ok, err, _ = extract_archive(real_path, inner_dir, os.path.splitext(real_path)[1].lower())
+        if ok:
+            _import_tree(inner_dir, virtual_path, depth + 1, totals, doc_done, counters)
+        else:
+            totals["unexpanded"].append(rel_inside)
+            if "exceeds free space" in str(err):
+                totals["out_of_space"] = True
+    finally:
+        shutil.rmtree(inner_dir, ignore_errors=True)
 
 
 def main():
