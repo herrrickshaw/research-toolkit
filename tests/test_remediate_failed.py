@@ -263,14 +263,11 @@ def test_main_happy_path_with_open_library_metadata(env, monkeypatch, capsys):
     assert "Already ok: 0  Currently failing: 1" in capsys.readouterr().out
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError,
-                   reason="remediate_failed.py: every enriched item is logged metadata_source='google-books', "
-                          "even when the record came from Open Library")
 def test_main_metadata_source_names_open_library_when_it_supplied_the_record(env, monkeypatch):
     crud = StubCRUD()
     setup_main(env, monkeypatch, ["Books/Jane Doe - Orig (1999).pdf"], crud)   # Open Library hit
     rf.main()
-    assert recs(env)[-1]["metadata_source"] != "google-books"
+    assert recs(env)[-1]["metadata_source"] == "open-library"
 
 
 def test_main_uses_google_books_when_open_library_misses(env, monkeypatch):

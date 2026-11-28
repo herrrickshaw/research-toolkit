@@ -80,7 +80,8 @@ def classify_title(title, api_key):
     except Exception as e:
         return None, str(e)
 
-    content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+    choices = data.get("choices") or [{}]  # an empty list is as unusable as a missing key
+    content = (choices[0].get("message") or {}).get("content") or ""
     match = re.search(r"\{.*\}", content, re.DOTALL)
     if not match:
         return None, f"no-json-in-response: {content[:200]}"

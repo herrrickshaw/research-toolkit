@@ -350,10 +350,6 @@ def test_main_end_to_end_inserts_and_writes_logs(env, monkeypatch, capsys):
     assert "scan complete: 4 document file(s)" in out
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError,
-                   reason="sweep_all_folders.py main(): a pathological-skip folder is checkpointed but never added to "
-                          "all_skipped, so a fresh run omits it from sweep_skipped_folders.jsonl while a resumed run "
-                          "(which reloads it from the checkpoint) includes it")
 def test_main_pathological_skip_reported_in_skipped_log_on_fresh_run(env, monkeypatch):
     World(monkeypatch, {"dropbox:": {"top": ["Zotero"]}, "googledrive:": {"top": []}})
     run_main(monkeypatch, "--dry-run")

@@ -8,6 +8,34 @@ A methodology and reference implementation for turning a large, unsorted pile of
 
 This is not a research corpus and contains no documents, filenames, or content from any specific collection. It's the pipeline: how to discover, extract, and catalog documents at a scale where naive "just loop over the files" scripts fall over.
 
+## In plain English
+
+*This section is for readers who do not write software.*
+
+**What problem does it solve?** Imagine thousands of books and papers dumped into random folders and zip files.
+This toolkit is the librarian: it finds them, adds them to Zotero (a free program for organising references),
+and tries to look up the proper title, author and year.
+
+**What happens, step by step**
+1. **Look before touching:** list what is there.
+2. **Import** documents into Zotero. Large folder trees are split into smaller parts so one slow folder does not
+   stall everything.
+3. **Open archives** one at a time, to avoid filling the disk. A zip inside another zip is noted but not opened.
+4. **Repair names:** for items that failed, guess the details from the file name and check them against two free
+   book catalogues, Open Library and Google Books. The log now records which of the two supplied the match.
+5. **Keep a diary** of every success and failure, so a rerun can skip finished work.
+
+**How much should you trust it?** Titles and authors guessed from file names, and topics suggested by AI, can be
+wrong. Spot-check them. Some of these scripts change your Zotero library, so back it up first and read a
+script's description before running it.
+
+**Where does your information go?** Book lookups send titles and author names to Open Library or Google Books.
+The optional AI sorting step sends document titles to Groq, an outside AI service. Cloud files are fetched using your
+own storage connection.
+
+**What you need:** Python, Zotero, rclone, and comfort with a command line. The code reflects one person's large
+library, so expect to adjust folder names and settings for yours.
+
 ## The methodology
 
 Processing tens of thousands of files across an unpredictable folder structure surfaces problems that don't show up at small scale. The approach here:
