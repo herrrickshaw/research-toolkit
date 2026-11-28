@@ -76,3 +76,72 @@ def test_7z_is_extracted_and_links_are_ignored(run, tmp_path):
                     "-C", str(src), "paper.pdf", "link.pdf"], check=True)
     saved, rec = run("a.7z", archive.read_bytes())
     assert saved == ["a.7z!paper.pdf"] and rec["status"] == "ok"
+
+
+# ---- bsdtar handling with a stand-in, so it is tested where bsdtar is absent ----------
+
+LINE = "-rw-r--r--  0 user group {size} Jan  1 10:00 {name}"
+
+
+def fake_bsdtar(monkeypatch, listing=(0, LINE.format(size=5, name="a.pdf"), ""),
+                extract=(0, "", ""), writes=()):
+    """Replace the bsdtar program: -tvf returns `listing`, -xf writes `writes` then `extract`."""
+    calls = []
+
+    def run_stub(cmd, **_kwargs):
+        calls.append(cmd[1])
+        if cmd[1] == "-tvf":
+            return subprocess.CompletedProcess(cmd, *listing)
+        for name in writes:
+            with open(os.path.join(cmd[-1], name), "wb") as f:
+                f.write(b"x")
+        return subprocess.CompletedProcess(cmd, *extract)
+
+    monkeypatch.setattr(pa, "BSDTAR", "/fake/bsdtar")
+    monkeypatch.setattr(pa.subprocess, "run", run_stub)
+    monkeypatch.setattr(pa, "free_bytes", lambda: 1000)
+    monkeypatch.setattr(pa, "SAFETY_MARGIN_BYTES", 0)
+    return calls
+
+
+def test_rar_is_extracted_and_inner_archives_are_reported(monkeypatch, tmp_path):
+    calls = fake_bsdtar(monkeypatch, writes=("a.pdf", "inner.zip"))
+    assert pa.extract_archive("x.rar", str(tmp_path), ".rar") == (True, None, ["inner.zip"])
+    assert calls == ["-tvf", "-xf"]
+
+
+@pytest.mark.parametrize("listing,message", [
+    ((1, "", "damaged header"), "damaged header"),
+    ((1, "", ""), "could not list"),
+    ((0, "garbage line", ""), "could not read sizes"),
+    ((0, LINE.format(size="big", name="a.pdf"), ""), "could not read sizes"),
+    ((0, LINE.format(size=5000, name="a.pdf"), ""), "exceeds free space"),
+])
+def test_nothing_is_extracted_when_the_listing_is_unsafe(monkeypatch, tmp_path, listing, message):
+    calls = fake_bsdtar(monkeypatch, listing=listing)
+    ok, err, nested = pa.extract_archive("x.7z", str(tmp_path), ".7z")
+    assert ok is False and message in err and nested == []
+    assert calls == ["-tvf"]
+
+
+@pytest.mark.parametrize("extract,message", [
+    ((1, "", "wrong passphrase"), "wrong passphrase"),
+    ((1, "", ""), "extraction failed"),
+])
+def test_extraction_failure_is_reported(monkeypatch, tmp_path, extract, message):
+    fake_bsdtar(monkeypatch, extract=extract)
+    ok, err, _ = pa.extract_archive("x.rar", str(tmp_path), ".rar")
+    assert ok is False and message in err
+
+
+def test_links_in_an_extracted_tree_are_not_imported(monkeypatch, tmp_path):
+    saved = []
+    monkeypatch.setattr(pa, "_save_extracted_file", lambda real, virtual, *a: saved.append(virtual))
+    tree = tmp_path / "tree"
+    tree.mkdir()
+    (tree / "real.pdf").write_bytes(b"1")
+    (tmp_path / "outside.pdf").write_bytes(b"secret")
+    (tree / "link.pdf").symlink_to(tmp_path / "outside.pdf")
+    totals = {"found": 0, "nested_seen": 0, "unexpanded": [], "out_of_space": False}
+    pa._import_tree(str(tree), "a.zip", 1, totals, set(), {})
+    assert saved == ["a.zip!real.pdf"] and totals["found"] == 1
