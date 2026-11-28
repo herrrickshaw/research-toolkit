@@ -133,9 +133,6 @@ def test_classify_title_missing_choices_key(monkeypatch):
     assert res is None and err.startswith("no-json-in-response")
 
 
-@pytest.mark.xfail(strict=True, raises=IndexError,
-                   reason="smart_classify.py:83 data.get('choices', [{}])[0] only defaults a MISSING key; "
-                          "an empty choices list raises IndexError instead of returning (None, error)")
 def test_classify_title_empty_choices_list(monkeypatch):
     patch_urlopen(monkeypatch, Resp({"choices": []}))
     res, err = sc.classify_title("t", "k")

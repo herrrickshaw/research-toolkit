@@ -309,11 +309,13 @@ def main():
         for folder in top_folders:
             if remote == "dropbox:" and folder.lower() in ALREADY_COVERED_TOP_FOLDERS:
                 continue
+            if (remote, folder) in done_units:
+                continue
             if folder.lower() in PATHOLOGICAL_SKIP_FOLDERS:
                 log(f"skip {remote}{folder} (pathologically slow — Zotero's own per-item storage mirror)")
-                checkpoint(remote, folder, source, [], [], [{"path": f"{remote}{folder}", "reason": "pathological_skip"}])
-                continue
-            if (remote, folder) in done_units:
+                entry = {"path": f"{remote}{folder}", "reason": "pathological_skip"}
+                all_skipped.append(entry)
+                checkpoint(remote, folder, source, [], [], [entry])
                 continue
             found, archives, skipped = [], [], []
             walk(remote, folder, 0, args.max_depth, args.per_call_timeout, found, archives, skipped)

@@ -172,13 +172,15 @@ def main():
             continue
 
         parsed = parse_filename(basename)
-        enriched = openlibrary_lookup(parsed["title"], parsed["authors"]) or google_books_lookup(parsed["title"], parsed["authors"])
+        enriched, found_by = openlibrary_lookup(parsed["title"], parsed["authors"]), "open-library"
+        if not enriched:
+            enriched, found_by = google_books_lookup(parsed["title"], parsed["authors"]), "google-books"
         if enriched:
             title = enriched["title"] or parsed["title"]
             creators = build_creators(enriched["authors"], parsed["authors"])
             date = enriched["date"] or parsed["year"] or ""
             publisher, isbn, abstract = enriched["publisher"], enriched["isbn"], enriched["abstract"]
-            source = "google-books"
+            source = found_by
         else:
             title, creators = parsed["title"], parsed["authors"]
             date = parsed["year"] or ""
